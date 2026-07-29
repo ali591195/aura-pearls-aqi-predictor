@@ -3,3 +3,9 @@
 
 #Blueprint
 aura-pearls-aqi-predictor-master-plan.md
+
+#Environment
+.env
+
+# Virtual environments
+venv/
