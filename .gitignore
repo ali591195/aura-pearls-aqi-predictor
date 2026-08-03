@@ -1,11 +1,13 @@
 # PyCharm
 .idea/
 
-#Blueprint
+#Blueprint & Log
 aura-pearls-aqi-predictor-master-plan.md
+progress-log.md
 
 #Environment
 .env
 
 # Virtual environments
 venv/
+
