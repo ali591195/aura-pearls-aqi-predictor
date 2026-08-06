@@ -1,7 +1,9 @@
 # Imports
 import requests
+import pandas as pd
 from requests import Response
 
+from src.feature_pipeline.hopsworks_client import raw_hourly_fs
 from src.feature_pipeline.parsers import parse_openmeteo_response
 from src.feature_pipeline.constants import OPENMETEO_AIRQUALITY_URL, OPENMETEO_WEATHER_URL, TIMEOUT
 
@@ -74,9 +76,12 @@ def fetch_data(url: str, params: dict[str, str | list[str] | float]) -> Response
 openmeteo_airquality_response = fetch_data(OPENMETEO_AIRQUALITY_URL, openmeteo_airquality_params)
 openmeteo_weather_response = fetch_data(OPENMETEO_WEATHER_URL, openmeteo_weather_params)
 
-
-
-
 if openmeteo_airquality_response is not None and openmeteo_weather_response is not None:
-        parse_openmeteo_response(openmeteo_airquality_response, openmeteo_weather_response)
+    # Get features
+    features = parse_openmeteo_response(openmeteo_airquality_response, openmeteo_weather_response)
+    df = pd.DataFrame([features])
+
+    # Insert into the feature store for raw data
+    raw_hourly_fs.insert(df)
+
 
