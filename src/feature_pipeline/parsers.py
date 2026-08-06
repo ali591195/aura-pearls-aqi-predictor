@@ -16,10 +16,8 @@ def parse_openmeteo_response(airquality_resp: Response, weather_resp: Response) 
 
     # Safely check header type
     airquality_header = airquality_resp.headers.get("Content-Type", "")
-    print(f"Air Quality API Header: {airquality_header}")
 
     weather_header = weather_resp.headers.get("Content-Type", "")
-    print(f"Weather API Header: {weather_header}")
 
     if "application/json" in airquality_header and "application/json" in weather_header:
         # Get data
@@ -36,8 +34,6 @@ def parse_openmeteo_response(airquality_resp: Response, weather_resp: Response) 
             "so2": airquality_hourly_data["sulphur_dioxide"][0]
         }
 
-        print(f"Pollutants: {pollutants}")
-
         # To calculate ppm/ppb
         gas_params: IdealGasParams = {
             "temp": weather_hourly_data["temperature_2m"][0],
@@ -51,8 +47,6 @@ def parse_openmeteo_response(airquality_resp: Response, weather_resp: Response) 
             print(f"Error: {e}")
             print("AQI cannot be calculated.")
             return None
-
-        print(f"AQIS = {pollutant_aqis}")
 
         aqi = max(pollutant_aqis.values())
 
@@ -70,7 +64,6 @@ def parse_openmeteo_response(airquality_resp: Response, weather_resp: Response) 
             "ts": datetime.fromisoformat(airquality_hourly_data["time"][0]).replace(tzinfo=UTC)
         }
 
-        print(f"Fetched data: {features}")
 
         return features
 
