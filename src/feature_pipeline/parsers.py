@@ -5,7 +5,7 @@ from src.feature_pipeline.aqi import calculate_pollutants_aqis
 from src.feature_pipeline.schemas import FeatureDict, Pollutants, IdealGasParams
 
 
-def parse_openmeteo_response(airquality_resp: Response, weather_resp: Response) -> FeatureDict | None:
+def parse_openmeteo_response(airquality_resp: Response, weather_resp: Response) -> list[FeatureDict] | None:
     """
         Raise status error, check header, get relevant data, print & return it
 
@@ -24,48 +24,55 @@ def parse_openmeteo_response(airquality_resp: Response, weather_resp: Response) 
         airquality_hourly_data = airquality_resp.json()["hourly"]
         weather_hourly_data = weather_resp.json()["hourly"]
 
-        # Dictionary of required data
-        pollutants: Pollutants = {
-            "pm25": airquality_hourly_data["pm2_5"][0],
-            "pm10": airquality_hourly_data["pm10"][0],
-            "o3": airquality_hourly_data["ozone"][0],
-            "co": airquality_hourly_data["carbon_monoxide"][0],
-            "no2": airquality_hourly_data["nitrogen_dioxide"][0],
-            "so2": airquality_hourly_data["sulphur_dioxide"][0]
-        }
+        parsed_data: list[FeatureDict] = []
 
-        # To calculate ppm/ppb
-        gas_params: IdealGasParams = {
-            "temp": weather_hourly_data["temperature_2m"][0],
-            "pressure": weather_hourly_data["surface_pressure"][0]
-        }
+        # For each hour
+        for i in range(len(airquality_hourly_data["time"])):
 
-        # All pollutants api
-        try:
-            pollutant_aqis = calculate_pollutants_aqis(pollutants.copy(), gas_params)
-        except ValueError as e:
-            print(f"Error: {e}")
-            print("AQI cannot be calculated.")
-            return None
+            # Dictionary of required data
+            pollutants: Pollutants = {
+                "pm25": airquality_hourly_data["pm2_5"][i],
+                "pm10": airquality_hourly_data["pm10"][i],
+                "o3": airquality_hourly_data["ozone"][i],
+                "co": airquality_hourly_data["carbon_monoxide"][i],
+                "no2": airquality_hourly_data["nitrogen_dioxide"][i],
+                "so2": airquality_hourly_data["sulphur_dioxide"][i]
+            }
 
-        aqi = max(pollutant_aqis.values())
+            # To calculate ppm/ppb
+            gas_params: IdealGasParams = {
+                "temp": weather_hourly_data["temperature_2m"][i],
+                "pressure": weather_hourly_data["surface_pressure"][i]
+            }
 
-        # The required data
-        features: FeatureDict = {
-            **pollutants,
-            **gas_params,
+            # All pollutants api
+            try:
+                pollutant_aqis = calculate_pollutants_aqis(pollutants.copy(), gas_params)
+            except ValueError as e:
+                print(f"Error: {e}")
+                print("AQI cannot be calculated.")
+                return None
 
-            "aqi": aqi,
+            aqi = max(pollutant_aqis.values())
 
-            "humidity": weather_hourly_data["relative_humidity_2m"][0],
-            "wind_spd": weather_hourly_data["wind_speed_10m"][0],
-            "dew_pt": weather_hourly_data["dew_point_2m"][0],
+            # The required data
+            features: FeatureDict = {
+                **pollutants,
+                **gas_params,
 
-            "ts": datetime.fromisoformat(airquality_hourly_data["time"][0]).replace(tzinfo=UTC)
-        }
+                "aqi": aqi,
 
+                "humidity": weather_hourly_data["relative_humidity_2m"][i],
+                "wind_spd": weather_hourly_data["wind_speed_10m"][i],
+                "dew_pt": weather_hourly_data["dew_point_2m"][i],
 
-        return features
+                "ts": datetime.fromisoformat(airquality_hourly_data["time"][i]).replace(tzinfo=UTC)
+            }
+
+            parsed_data.append(features)
+
+        return parsed_data
+
 
     else:
         print("One of the response is not json.")
