@@ -7,6 +7,10 @@ type Number = float | int
 
 type PollutantName = Literal["pm25", "pm10", "o3", "co", "no2", "so2"]
 
+type DateRange = tuple[str, str]
+
+type DateRanges = list[DateRanges]
+
 
 class Pollutants(TypedDict):
     pm25: Number
