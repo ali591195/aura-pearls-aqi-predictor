@@ -9,7 +9,7 @@ type PollutantName = Literal["pm25", "pm10", "o3", "co", "no2", "so2"]
 
 type DateRange = tuple[str, str]
 
-type DateRanges = list[DateRanges]
+type DateRanges = list[DateRange]
 
 
 class Pollutants(TypedDict):
