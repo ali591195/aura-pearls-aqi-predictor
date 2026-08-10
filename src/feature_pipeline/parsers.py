@@ -49,9 +49,9 @@ def parse_openmeteo_response(airquality_resp: Response, weather_resp: Response) 
             try:
                 pollutant_aqis = calculate_pollutants_aqis(pollutants.copy(), gas_params)
             except ValueError as e:
-                print(f"Error: {e}")
                 print("AQI cannot be calculated.")
-                return None
+                print(f"Skipping record at {airquality_hourly_data['time'][i]}: {e}")
+                continue
 
             aqi = max(pollutant_aqis.values())
 
