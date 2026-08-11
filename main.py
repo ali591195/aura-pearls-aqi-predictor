@@ -1,4 +1,3 @@
-from src.feature_pipeline.hopsworks_client import raw_hourly_fs
+from src.feature_pipeline.hourly_pipeline import run_hourly_pipeline
 
-df = raw_hourly_fs.read()
-print(df.shape[0])
+run_hourly_pipeline()

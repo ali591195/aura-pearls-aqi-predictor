@@ -1,5 +1,6 @@
 import os
 import tempfile
+import platform
 from pathlib import Path
 
 import hopsworks
@@ -8,12 +9,17 @@ from dotenv import load_dotenv
 # Load environment variable
 load_dotenv()
 
+# Login Parameters
+login_kwargs = {
+    "api_key_value": os.getenv("HOPSWORKS_API_KEY"),
+    "project": "aura_pearls_aqi_predictor", # Name
+}
+
+if platform.system() == "Windows":
+    login_kwargs["cert_folder"] = str(Path(tempfile.gettempdir()) / "hopsworks_certs") # Overriding the linux file paths
+
 # Get project from hopsworks system
-project = hopsworks.login(
-    api_key_value=os.getenv("HOPSWORKS_API_KEY"),
-    project="aura_pearls_aqi_predictor", # Name
-    cert_folder=str(Path(tempfile.gettempdir()) / "hopsworks_certs") # Overriding the linux file paths
-)
+project = hopsworks.login(**login_kwargs)
 
 # Getting Feature Store
 fs = project.get_feature_store()
