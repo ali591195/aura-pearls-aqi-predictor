@@ -3,6 +3,9 @@ name: Hourly Pipeline
 on:
   workflow_dispatch:
 
+  schedule:
+    - cron: '0 * * * *'
+
 jobs:
   run-hourly-pipeline:
     runs-on: ubuntu-latest
@@ -23,6 +26,7 @@ jobs:
 
       - name: Run hourly pipeline
         env:
+          PYTHONPATH: .
           HOPSWORKS_API_KEY: ${{ secrets.HOPSWORKS_API_KEY }}
         run: |
           python scripts/run_hourly_pipeline.py
