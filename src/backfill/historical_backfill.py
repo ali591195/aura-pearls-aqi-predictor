@@ -15,13 +15,13 @@ def run_historical_backfill(historical_backfill_dates: DateRanges | None = None)
     """
 
     if historical_backfill_dates is None:
-        historical_backfill_dates = [("2025-11-08", "2026-02-07"), ("2026-02-08", "2026-05-07"), ("2026-05-08", "2026-08-08")]
+        historical_backfill_dates: DateRanges = [("2025-11-08", "2026-02-07"), ("2026-02-08", "2026-05-07"), ("2026-05-08", "2026-08-08")]
 
     historical_backfill_features: list[FeatureDict] = []
 
     # For each date range
     for date_range in historical_backfill_dates:
-        features = collect_features(date_range, OPENMETEO_WEATHER_HISTORICAL_URL)
+        features = collect_features(OPENMETEO_WEATHER_HISTORICAL_URL, "BACKFILL", date_range)
 
         if features is not None:
             historical_backfill_features.extend(features)
