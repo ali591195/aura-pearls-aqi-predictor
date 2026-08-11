@@ -11,6 +11,8 @@ type DateRange = tuple[str, str]
 
 type DateRanges = list[DateRange]
 
+type CollectionMode = Literal["BACKFILL", "HOURLY"]
+
 class AirQualityHourly(TypedDict):
     time: list[str]
     pm2_5: list[float]
