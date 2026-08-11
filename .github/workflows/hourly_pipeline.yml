@@ -23,6 +23,7 @@ jobs:
 
       - name: Run hourly pipeline
         env:
+          PYTHONPATH: .
           HOPSWORKS_API_KEY: ${{ secrets.HOPSWORKS_API_KEY }}
         run: |
           python scripts/run_hourly_pipeline.py
