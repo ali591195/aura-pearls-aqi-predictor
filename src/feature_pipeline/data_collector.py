@@ -1,13 +1,13 @@
 from datetime import datetime, UTC
-from typing import Literal
 
 from src.feature_pipeline.constants import OPENMETEO_AIRQUALITY_URL
+from src.feature_pipeline.hopsworks_client import insert_raw_hourly_features
 from src.feature_pipeline.openmeteo_client import get_openmeteo_params, fetch_openmeteo_data
 from src.feature_pipeline.parsers import parse_openmeteo_hour, extract_hourly_data, parse_openmeteo_hours
-from src.feature_pipeline.schemas import FeatureDict, DateRange
+from src.feature_pipeline.schemas import FeatureDict, DateRange, CollectionMode
 
 
-def collect_features(weather_api: str, mode: Literal["BACKFILL", "HOURLY"], date_range: DateRange | None = None) -> list[FeatureDict] | None:
+def collect_features(weather_api: str, mode: CollectionMode, date_range: DateRange | None = None) -> list[FeatureDict] | None:
     """
         Collect features and modify structure according to Feature Group
 
@@ -52,3 +52,21 @@ def collect_features(weather_api: str, mode: Literal["BACKFILL", "HOURLY"], date
                 print("Please write supported modes.")
 
     return None
+
+def collect_and_insert_features(weather_api: str, mode: CollectionMode, date_range: DateRange | None = None) -> None:
+    """
+        Collect features and insert features in feature store
+
+        :param weather_api: The weather api url.
+        :param mode: Mode for collecting features.
+        :param date_range: Tuple containing the start and end dates (YYYY-MM-DD).
+        :return: None
+    """
+
+    features = collect_features(weather_api, mode, date_range)
+
+    if features is None:
+        raise RuntimeError("Feature collection failed.")
+
+    insert_raw_hourly_features(features)
+

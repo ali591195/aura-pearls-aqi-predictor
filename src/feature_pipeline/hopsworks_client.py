@@ -3,8 +3,11 @@ import tempfile
 import platform
 from pathlib import Path
 
+import pandas as pd
 import hopsworks
 from dotenv import load_dotenv
+
+from src.feature_pipeline.schemas import FeatureDict
 
 # Load environment variable
 load_dotenv()
@@ -34,3 +37,16 @@ raw_hourly_fs = fs.get_or_create_feature_group(
     online_enabled=False,
     time_travel_format="HUDI" # Default was DELTA
 )
+
+def insert_raw_hourly_features(features: list[FeatureDict]) -> None:
+    """
+        Insert the features in feature group
+
+        :param features: List of FeatureDict
+        :return: None
+    """
+
+    df = pd.DataFrame(features)
+
+    # Insert into the feature store for raw data
+    raw_hourly_fs.insert(df, write_options={"wait_for_job": True})
