@@ -3,6 +3,9 @@ name: Hourly Pipeline
 on:
   workflow_dispatch:
 
+  schedule:
+    - cron: '0 * * * *'
+
 jobs:
   run-hourly-pipeline:
     runs-on: ubuntu-latest
