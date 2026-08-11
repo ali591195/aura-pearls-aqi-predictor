@@ -11,6 +11,23 @@ type DateRange = tuple[str, str]
 
 type DateRanges = list[DateRange]
 
+class AirQualityHourly(TypedDict):
+    time: list[str]
+    pm2_5: list[float]
+    pm10: list[float]
+    ozone: list[float]
+    carbon_monoxide: list[float]
+    nitrogen_dioxide: list[float]
+    sulphur_dioxide: list[float]
+
+
+class WeatherHourly(TypedDict):
+    time: list[str]
+    temperature_2m: list[float]
+    surface_pressure: list[float]
+    relative_humidity_2m: list[float]
+    wind_speed_10m: list[float]
+    dew_point_2m: list[float]
 
 class Pollutants(TypedDict):
     pm25: Number

@@ -1,3 +1,4 @@
+import time
 from typing import Literal
 
 import requests
@@ -53,20 +54,29 @@ def get_exception_detail(url: str, error: requests.exceptions.RequestException) 
 
 def fetch_openmeteo_data(url: str, params: dict[str, str | list[str] | float]) -> Response | None:
     """
-        Fetch data from the given url
+        Fetch data from the given URL with retries.
 
         :param url: The url endpoint
         :param params: The url parameters
         :return: A Response object or none if exception is raised
     """
-    try:
-        resp = requests.get(url, params=params, timeout=TIMEOUT)
+    max_attempts = 3
 
-        # Raise status errors
-        resp.raise_for_status()
+    for attempt in range(1, max_attempts + 1):
+        try:
+            resp = requests.get(url, params=params, timeout=TIMEOUT)
 
-        return resp
+            # Raise status errors
+            resp.raise_for_status()
 
-    except requests.exceptions.RequestException as e:
-        print(get_exception_detail(url, e))
-        return None
+            return resp
+
+        except requests.exceptions.RequestException as e:
+            print(f"Open-meteo request failed | attempts: {attempt}/{max_attempts}")
+            print(get_exception_detail(url, e))
+
+            if attempt < max_attempts:
+                time.sleep(2 ** attempt)
+
+    print("All Open-Meteo request attempts failed.")
+    return None
