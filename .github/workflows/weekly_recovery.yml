@@ -1,4 +1,4 @@
-name: Daily Recovery
+name: Weekly Recovery
 
 on:
   workflow_dispatch:
