@@ -1,0 +1,22 @@
+name: Run pipeline script
+description: Run a project pipeline script with the required environment
+
+inputs:
+  script:
+    description: Python script to execute from the scripts directory
+    required: true
+
+  hopsworks_api_key:
+    description: Hopsworks API key
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Run pipeline
+      shell: bash
+      env:
+        PYTHONPATH: .
+        HOPSWORKS_API_KEY: ${{ inputs.hopsworks_api_key}}
+      run: |
+        python scripts/${{ inputs.script }}
