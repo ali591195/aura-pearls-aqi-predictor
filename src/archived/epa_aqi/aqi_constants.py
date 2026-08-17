@@ -1,20 +1,9 @@
 from typing import Literal
 
-from src.feature_pipeline.schemas import Pollutants, PollutantName, Number
-
-# URLS
-OPENMETEO_AIRQUALITY_URL: str = "https://air-quality-api.open-meteo.com/v1/air-quality"
-OPENMETEO_WEATHER_URL: str = "https://api.open-meteo.com/v1/forecast"
-OPENMETEO_WEATHER_HISTORICAL_URL: str = "https://archive-api.open-meteo.com/v1/archive"
-
-# Timeout for requests
-TIMEOUT: float = 10
+from src.archived.epa_aqi.aqi_schemas import Pollutants, PollutantName
+from src.common.schemas import Number
 
 UNIVERSAL_GAS_CONSTANT = 8.314462618
-
-# City Location
-LAHORE_LATITUDE = 31.558
-LAHORE_LONGITUDE = 74.3507
 
 # Pollutants Constants
 POLLUTANTS_MAX_CONCENTRATION: Pollutants = {
