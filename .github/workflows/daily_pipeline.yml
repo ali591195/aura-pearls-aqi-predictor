@@ -1,21 +1,21 @@
-name: Hourly Pipeline
+name: Daily Pipeline
 
 on:
   workflow_dispatch:
 
   schedule:
-    - cron: '13 * * * *'
+    - cron: '37 4 * * *'
 
 jobs:
-  run-hourly-pipeline:
+  run-daily-pipeline:
     runs-on: ubuntu-latest
 
     steps:
       - name: Set up Python environment
         uses: ./.github/actions/setup_python_env
 
-      - name: Run hourly pipeline
+      - name: Run daily recovery
         uses: ./.github/actions/run_pipeline
         with:
-          script: run_hourly_pipeline.py
+          script: run_daily_pipeline.py
           hopsworks_api_key: ${{ secrets.HOPSWORKS_API_KEY }}

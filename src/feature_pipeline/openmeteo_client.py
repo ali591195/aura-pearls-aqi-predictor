@@ -4,8 +4,8 @@ from typing import Literal
 import requests
 from requests import Response
 
-from src.feature_pipeline.constants import LAHORE_LATITUDE, LAHORE_LONGITUDE, TIMEOUT
-from src.feature_pipeline.schemas import DateRange
+from src.common.constants import LAHORE_LATITUDE, LAHORE_LONGITUDE, TIMEOUT
+from src.common.schemas import DateRange
 
 
 def get_openmeteo_params(date_range: DateRange, mode: Literal["AIR_QUALITY", "WEATHER"]) -> dict[str, float | list[str] | str]:
@@ -18,7 +18,7 @@ def get_openmeteo_params(date_range: DateRange, mode: Literal["AIR_QUALITY", "WE
     """
 
     # Hourly parameter per mode
-    air_quality_hour_params = ["pm10", "pm2_5", "carbon_monoxide", "nitrogen_dioxide", "sulphur_dioxide", "ozone"]
+    air_quality_hour_params = ["pm10", "pm2_5", "carbon_monoxide", "nitrogen_dioxide", "sulphur_dioxide", "ozone", "us_aqi"]
     weather_hour_params = ["temperature_2m", "dew_point_2m", "relative_humidity_2m", "surface_pressure", "wind_speed_10m"]
 
     # Dates extraction

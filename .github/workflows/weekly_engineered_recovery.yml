@@ -1,21 +1,21 @@
-name: Hourly Pipeline
+name: Weekly Engineered Recovery
 
 on:
   workflow_dispatch:
 
   schedule:
-    - cron: '13 * * * *'
+    - cron: '55 0 * * 1'
 
 jobs:
-  run-hourly-pipeline:
+  run-weekly-recovery:
     runs-on: ubuntu-latest
 
     steps:
       - name: Set up Python environment
         uses: ./.github/actions/setup_python_env
 
-      - name: Run hourly pipeline
+      - name: Run weekly recovery
         uses: ./.github/actions/run_pipeline
         with:
-          script: run_hourly_pipeline.py
+          script: run_weekly_engineered_recovery.py
           hopsworks_api_key: ${{ secrets.HOPSWORKS_API_KEY }}

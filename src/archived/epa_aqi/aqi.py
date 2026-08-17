@@ -1,8 +1,8 @@
 from math import floor
 
-from src.feature_pipeline.schemas import Pollutants, IdealGasParams
-from src.feature_pipeline.constants import (POLLUTANTS_CONVERSION_DATA, UNIVERSAL_GAS_CONSTANT,
-                                            POLLUTANTS_MAX_CONCENTRATION, POLLUTANTS_BREAKPOINTS)
+from src.archived.epa_aqi.aqi_constants import POLLUTANTS_MAX_CONCENTRATION, POLLUTANTS_BREAKPOINTS, \
+    POLLUTANTS_CONVERSION_DATA, UNIVERSAL_GAS_CONSTANT
+from src.archived.epa_aqi.aqi_schemas import Pollutants, IdealGasParams
 
 
 def calculate_pollutants_aqis(pollutants: Pollutants, ideal_gas_law_params: IdealGasParams) -> Pollutants:

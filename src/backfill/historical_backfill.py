@@ -1,7 +1,7 @@
-from src.feature_pipeline.constants import OPENMETEO_WEATHER_HISTORICAL_URL
+from src.common.constants import OPENMETEO_WEATHER_HISTORICAL_URL, HISTORICAL_BACKFILL_START_DATE
 from src.feature_pipeline.data_collector import collect_features
-from src.feature_pipeline.hopsworks_client import insert_raw_hourly_features
-from src.feature_pipeline.schemas import FeatureDict, DateRanges
+from src.common.hopsworks_client import insert_raw_features
+from src.common.schemas import FeatureDict, DateRanges
 
 
 def run_historical_backfill(historical_backfill_dates: DateRanges | None = None) -> None:
@@ -13,7 +13,7 @@ def run_historical_backfill(historical_backfill_dates: DateRanges | None = None)
     """
 
     if historical_backfill_dates is None:
-        historical_backfill_dates: DateRanges = [("2025-11-08", "2026-02-07"), ("2026-02-08", "2026-05-07"), ("2026-05-08", "2026-08-08")]
+        historical_backfill_dates: DateRanges = [(HISTORICAL_BACKFILL_START_DATE, "2026-02-07"), ("2026-02-08", "2026-05-07"), ("2026-05-08", "2026-08-08")]
 
     historical_backfill_features: list[FeatureDict] = []
 
@@ -24,4 +24,4 @@ def run_historical_backfill(historical_backfill_dates: DateRanges | None = None)
         if features is not None:
             historical_backfill_features.extend(features)
 
-    insert_raw_hourly_features(historical_backfill_features)
+    insert_raw_features(historical_backfill_features)

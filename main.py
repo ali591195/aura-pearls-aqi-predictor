@@ -1,3 +1,3 @@
-from src.feature_pipeline.hourly_pipeline import run_hourly_pipeline
+from src.backfill.engineered_features_backfill import run_engineered_features_backfill
 
-run_hourly_pipeline()
+run_engineered_features_backfill()
