@@ -1,4 +1,8 @@
-from src.common.constants import OPENMETEO_WEATHER_HISTORICAL_URL, HISTORICAL_BACKFILL_START_DATE
+from datetime import date
+from dateutil.relativedelta import relativedelta
+
+from src.common.constants import OPENMETEO_WEATHER_HISTORICAL_URL, HISTORICAL_BACKFILL_START_DATE, \
+    HISTORICAL_BACKFILL_END_DATE
 from src.feature_pipeline.data_collector import collect_features
 from src.common.hopsworks_client import insert_raw_features
 from src.common.schemas import FeatureDict, DateRanges
@@ -13,7 +17,7 @@ def run_historical_backfill(historical_backfill_dates: DateRanges | None = None)
     """
 
     if historical_backfill_dates is None:
-        historical_backfill_dates: DateRanges = [(HISTORICAL_BACKFILL_START_DATE, "2026-02-07"), ("2026-02-08", "2026-05-07"), ("2026-05-08", "2026-08-08")]
+        historical_backfill_dates: DateRanges = generate_backfill_date_ranges(HISTORICAL_BACKFILL_START_DATE, HISTORICAL_BACKFILL_END_DATE)
 
     historical_backfill_features: list[FeatureDict] = []
 
@@ -25,3 +29,31 @@ def run_historical_backfill(historical_backfill_dates: DateRanges | None = None)
             historical_backfill_features.extend(features)
 
     insert_raw_features(historical_backfill_features)
+
+def generate_backfill_date_ranges(start_date: str, end_date: str) -> DateRanges:
+    """
+        Generate date ranges for backfill
+
+        :param start_date: Start date of the range
+        :param end_date: End date of the range
+        :return: None
+    """
+
+    start = date.fromisoformat(start_date)
+    end = date.fromisoformat(end_date)
+
+    ranges: DateRanges = []
+    current_start = start
+
+    while current_start <= end:
+        next_start = current_start + relativedelta(months=3)
+        current_end = min(next_start - relativedelta(days=1), end)
+
+        ranges.append((
+            current_start.isoformat(),
+            current_end.isoformat(),
+        ))
+
+        current_start = current_end + relativedelta(days=1)
+
+    return ranges
