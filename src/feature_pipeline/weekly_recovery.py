@@ -1,6 +1,6 @@
 from datetime import datetime, UTC, timedelta
 
-from src.feature_pipeline.constants import OPENMETEO_WEATHER_URL
+from src.common.constants import OPENMETEO_WEATHER_URL
 from src.feature_pipeline.data_collector import collect_and_insert_features
 
 
