@@ -9,12 +9,13 @@ from src.feature_pipeline.daily_recovery import run_daily_recovery
 from src.feature_pipeline.data_collector import collect_and_insert_features
 
 
-def get_complete_raw_data(mode: FeatureEngineeringMode, backfill_start_date: datetime | None = None) -> tuple[DataFrame, datetime | tuple[datetime, datetime]] | None:
+def get_complete_raw_data(mode: FeatureEngineeringMode, backfill_start_date: datetime | None = None, backfill_end_date: datetime | None = None) -> tuple[DataFrame, datetime | tuple[datetime, datetime]] | None:
     """
         Get raw data from feature store for engineering pipelines
 
         :param mode: Recovery, normal or backfill mode
         :param backfill_start_date: Start date for backfill mode
+        :param backfill_end_date: End date for backfill mode
         :return: The raw data and yesterday's datetime or a range of datetime
     """
 
@@ -42,15 +43,25 @@ def get_complete_raw_data(mode: FeatureEngineeringMode, backfill_start_date: dat
                 HISTORICAL_BACKFILL_START_DATE,
                 "%Y-%m-%d"
             ).replace(tzinfo=UTC)
+            prev_days_start = backfill_start_date + timedelta(days=6)
 
-        prev_days_start = backfill_start_date + timedelta(days=6)
+        else:
+            prev_days_start = backfill_start_date
+
         start_date = prev_days_start - timedelta(days=6)
 
-
+        if backfill_end_date is not None:
+            end_date = backfill_end_date
+            yesterday = end_date - timedelta(days=1)
 
     expected_rows = int(
         (today - prev_days_start).total_seconds() / 3600
     )
+
+    if mode == "BACKFILL" and backfill_end_date is not None:
+        expected_rows = int(
+            (backfill_end_date - prev_days_start).total_seconds() / 3600
+        )
 
     # Data extraction
     df = raw_hourly_fs.read(
@@ -65,9 +76,10 @@ def get_complete_raw_data(mode: FeatureEngineeringMode, backfill_start_date: dat
     elif mode == "WEEKLY_RECOVERY" or mode == "MONTHLY_RECOVERY" or mode == "BACKFILL":
         required_rows = df[
             (df["ts"] >= prev_days_start) &
-            (df["ts"] < today)
+            (df["ts"] < end_date)
             ]
 
+    print(expected_rows, len(required_rows))
 
     if len(required_rows) != expected_rows:
 
@@ -252,16 +264,17 @@ def build_engineered_features_for_dates(df: DataFrame, dates: list[datetime]) ->
 
     return engineered_features
 
-def run_engineered_features_pipeline(mode: FeatureEngineeringMode, backfill_start_date: datetime | None = None) -> None:
+def run_engineered_features_pipeline(mode: FeatureEngineeringMode, backfill_start_date: datetime | None = None, backfill_end_date: datetime | None = None) -> None:
     """
         Run the engineering recovery pipeline
 
         :param mode: Recovery, normal or backfill mode
         :param backfill_start_date: Start date for backfill mode
+        :param backfill_end_date: End date for backfill mode
         :return: None
     """
     # Get raw data
-    df, date_range = get_complete_raw_data(mode, backfill_start_date)
+    df, date_range = get_complete_raw_data(mode, backfill_start_date, backfill_end_date)
 
     # Get date ranges
     start_date, end_date = date_range
