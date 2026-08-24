@@ -58,6 +58,15 @@ FINAL_SELECTED_FEATURES = [
     "month",
 ]
 
+LOG_TRANSFORM_FEATURES = [
+    "co_today",
+    "pm25_roll_mean_3",
+    "pm25_roll_mean_7"
+    "pm10_roll_std_3",
+    "pm10_roll_std_7"
+
+]
+
 # Backfill start
 HISTORICAL_BACKFILL_START_DATE = "2022-08-05"
 HISTORICAL_BACKFILL_END_DATE = "2026-08-08"

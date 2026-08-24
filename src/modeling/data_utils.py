@@ -141,3 +141,38 @@ def train_and_evaluate_model(train_df: DataFrame, val_df: DataFrame, label: str 
         plot_actual_vs_predicted(y_val, y_val_pred)
 
     return model, (rmse, mae, r2)
+
+def load_modeling_data() -> DataFrame:
+    """
+        Load model data
+
+        :return: Dataframe
+    """
+
+    df = pd.read_parquet("../../notebooks/eda/data/engineered_features.parquet")
+
+    # Drop columns which does not have labels
+    df = (
+        df.dropna(subset=TARGET_COLUMNS)
+        .sort_values("ts")
+        .reset_index(drop=True)
+    )
+
+    return df
+
+def split_modeling_data(df: DataFrame) -> tuple[DataFrame, DataFrame, DataFrame]:
+    """
+        Splitting data for models
+
+        :param df: The full dataframe.
+        :return: Return train, val, and test splits
+    """
+
+    train_end = int(len(df) * 0.70)
+    val_end = int(len(df) * 0.85)
+
+    train_df = df.iloc[:train_end].copy()
+    val_df = df.iloc[train_end:val_end].copy()
+    test_df = df.iloc[val_end:].copy()
+
+    return train_df, val_df, test_df
