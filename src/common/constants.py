@@ -61,10 +61,9 @@ FINAL_SELECTED_FEATURES = [
 LOG_TRANSFORM_FEATURES = [
     "co_today",
     "pm25_roll_mean_3",
-    "pm25_roll_mean_7"
+    "pm25_roll_mean_7",
     "pm10_roll_std_3",
-    "pm10_roll_std_7"
-
+    "pm10_roll_std_7",
 ]
 
 # Backfill start
