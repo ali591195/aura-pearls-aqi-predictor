@@ -2,6 +2,8 @@ from typing import TypedDict, Literal
 
 from datetime import datetime
 
+from pandas import DataFrame
+
 # Reusable Number type
 type Number = float | int
 
@@ -125,3 +127,9 @@ class EngineeredFeatureDict(TypedDict):
 
     # Metadata
     ts: datetime
+
+class DeepLearningFitParamSchema(TypedDict):
+    epochs: int
+    batch_size: int
+    callbacks: list
+    verbose: int
