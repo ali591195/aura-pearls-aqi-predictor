@@ -1,3 +1,5 @@
+from typing import Any
+
 import pandas as pd
 import matplotlib.pyplot as plt
 
@@ -41,7 +43,8 @@ def calculate_feature_target_correlations(train_df: DataFrame, features: list[st
 
     return corr
 
-def select_features_with_rfecv(input_features: list[str], train_df: DataFrame, val_df: DataFrame) -> None:
+def select_features_with_rfecv(input_features: list[str], train_df: DataFrame, val_df: DataFrame,
+                               output_labels: list[str] = TARGET_COLUMNS, model: Any = None) -> None:
     """
         Gives RFECV for the features.
 
@@ -67,15 +70,21 @@ def select_features_with_rfecv(input_features: list[str], train_df: DataFrame, v
 
     y_full = pd.concat(
         [
-            train_df[TARGET_COLUMNS],
-            val_df[TARGET_COLUMNS],
+            train_df[output_labels],
+            val_df[output_labels],
         ],
         ignore_index=True,
     )
 
+    if len(output_labels) == 1:
+        y_full = y_full.squeeze()
+
     cv = PredefinedSplit(test_fold=split)
 
-    rfecv_model = create_eda_model()
+    if model is None:
+        rfecv_model = create_eda_model()
+    else:
+        rfecv_model = model
 
     rfecv = RFECV(
         estimator=rfecv_model,
