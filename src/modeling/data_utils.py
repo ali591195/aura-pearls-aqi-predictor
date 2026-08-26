@@ -3,7 +3,7 @@ from typing import Any
 import numpy as np
 import pandas as pd
 from keras.src.callbacks import EarlyStopping
-from pandas import DataFrame
+from pandas import DataFrame, Series
 from pathlib import Path
 from IPython.display import display
 from sklearn.ensemble import RandomForestRegressor
@@ -24,8 +24,8 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 
 def prepare_features_and_targets(train_df: DataFrame, val_df: DataFrame, additional_features: list[str] | None = None,
-                                 baseline: list[str] | None = None) \
-        -> tuple[DataFrame, DataFrame, DataFrame, DataFrame]:
+                                 baseline: list[str] | None = None, labels: list[str] = TARGET_COLUMNS) \
+        -> tuple[DataFrame, DataFrame | Series, DataFrame, DataFrame | Series]:
     """
         Prepare features and targets for training
 
@@ -33,6 +33,7 @@ def prepare_features_and_targets(train_df: DataFrame, val_df: DataFrame, additio
         :param val_df: Validation dataframe
         :param additional_features: Optional additional features
         :param baseline: Optional baseline to replace Baseline constant
+        :param labels: Optional list of labels
         :return: Train and validation features and targets
     """
 
@@ -45,20 +46,26 @@ def prepare_features_and_targets(train_df: DataFrame, val_df: DataFrame, additio
         features = features + additional_features
 
     X_train = train_df[features]
-    y_train = train_df[TARGET_COLUMNS]
-
     X_val = val_df[features]
-    y_val = val_df[TARGET_COLUMNS]
+
+    if len(labels) == 1:
+        y_train = train_df[labels].squeeze()
+        y_val = val_df[labels].squeeze()
+    else:
+        y_train = train_df[labels]
+        y_val = val_df[labels]
 
     return X_train, y_train, X_val, y_val
 
-def evaluate_model(y_val: DataFrame, y_val_pred: np.ndarray, toggle_print: bool = False) -> MetricResults:
+def evaluate_model(y_val: DataFrame | Series, y_val_pred: np.ndarray,
+                   toggle_print: bool = False, labels: list[str] = TARGET_COLUMNS) -> MetricResults:
     """
         Evaluate RMSE, MAE, R2 metrics for the model.
 
         :param y_val: Validation labels
         :param y_val_pred: Model's predictions
         :param toggle_print: A toggle for print
+        :param labels: Optional list of labels
         :return: The metrics
     """
 
@@ -67,7 +74,7 @@ def evaluate_model(y_val: DataFrame, y_val_pred: np.ndarray, toggle_print: bool 
     r2 = r2_score(y_val, y_val_pred, multioutput="raw_values")
 
     if toggle_print:
-        for i, target in enumerate(TARGET_COLUMNS):
+        for i, target in enumerate(labels):
             print(f"\n{target}")
             print(f"  RMSE: {rmse[i]:.4f}")
             print(f"  MAE:  {mae[i]:.4f}")
@@ -75,12 +82,13 @@ def evaluate_model(y_val: DataFrame, y_val_pred: np.ndarray, toggle_print: bool 
 
     return rmse, mae, r2
 
-def compare_model_metrics(model_1: ModelMetrics, model_2: ModelMetrics) -> None:
+def compare_model_metrics(model_1: ModelMetrics, model_2: ModelMetrics, labels: list[str] = TARGET_COLUMNS) -> None:
     """
         Compare metrics from two models in a side-by-side table.
 
         :param model_1: Tuple containing the model label and its metrics.
         :param model_2: Tuple containing the model label and its metrics.
+        :param labels: Optional list of labels
         :return: None
     """
 
@@ -89,7 +97,7 @@ def compare_model_metrics(model_1: ModelMetrics, model_2: ModelMetrics) -> None:
 
     rows = []
 
-    for i, target in enumerate(TARGET_COLUMNS):
+    for i, target in enumerate(labels):
         rows.append({
             "Target": target,
             f"{model_1_label} RMSE": rmse_1[i],
@@ -116,7 +124,8 @@ def train_and_evaluate_model(train_df: DataFrame, val_df: DataFrame, label: str 
                              additonal_features: list[str] | None = None, compare_model: ModelMetrics | None = None,
                              toggle_evaluate_print: bool = False, disable_plot: bool = False,
                              baseline: list[str] | None  = None, model: Any = None,
-                             deep_learning: DeepLearningFitParamSchema | bool = False) \
+                             deep_learning: DeepLearningFitParamSchema | bool = False,
+                             output_labels: list[str] = TARGET_COLUMNS) \
         -> tuple[RandomForestRegressor, MetricResults]:
     """
         Train and Evaluate model
@@ -131,10 +140,12 @@ def train_and_evaluate_model(train_df: DataFrame, val_df: DataFrame, label: str 
         :param baseline: Optional baseline to replace Baseline constant
         :param model: Optional model
         :param deep_learning: Optional deep learning toggle
+        :param output_labels: Optional list of labels
         :return: None
     """
 
-    X_train, y_train, X_val, y_val = prepare_features_and_targets(train_df, val_df, additonal_features, baseline = baseline)
+    X_train, y_train, X_val, y_val = prepare_features_and_targets(train_df, val_df, additonal_features,
+                                                                  baseline = baseline, labels=output_labels)
 
     if model is None:
         model = create_eda_model()
@@ -151,16 +162,17 @@ def train_and_evaluate_model(train_df: DataFrame, val_df: DataFrame, label: str 
 
     y_val_pred = model.predict(X_val)
 
-    rmse, mae, r2 = evaluate_model(y_val, y_val_pred, toggle_print = toggle_evaluate_print)
+    rmse, mae, r2 = evaluate_model(y_val, y_val_pred, toggle_print = toggle_evaluate_print, labels=output_labels)
 
     if compare_model is not None and label is not None:
         compare_model_metrics(
             compare_model,
-            (label, (rmse, mae, r2))
+            (label, (rmse, mae, r2)),
+            labels=output_labels
         )
 
     if not disable_plot:
-        plot_actual_vs_predicted(y_val, y_val_pred)
+        plot_actual_vs_predicted(y_val, y_val_pred, labels=output_labels)
 
     return model, (rmse, mae, r2)
 
@@ -203,6 +215,7 @@ def apply_log_transform(
     train_df: DataFrame,
     val_df: DataFrame,
     test_df: DataFrame,
+    features: list[str] = LOG_TRANSFORM_FEATURES
 ) -> tuple[DataFrame, DataFrame, DataFrame]:
     """
         Apply log transform on highly skewed features.
@@ -210,10 +223,9 @@ def apply_log_transform(
         :param train_df: Training dataframe
         :param val_df: Validating dataframe
         :param test_df: Testing dataframe
+        :param features: List of features on which to perform
         :return: Return log applied train, val, and test dataframes
     """
-
-    features = LOG_TRANSFORM_FEATURES
 
     train_df = train_df.copy()
     val_df = val_df.copy()
@@ -230,6 +242,7 @@ def apply_robust_scaler(
     train_df: DataFrame,
     val_df: DataFrame,
     test_df: DataFrame,
+    features: list[str] = FINAL_SELECTED_FEATURES
 ) -> tuple[DataFrame, DataFrame, DataFrame]:
     """
         Apply robust scaler on the dataframes.
@@ -237,6 +250,7 @@ def apply_robust_scaler(
         :param train_df: Training dataframe
         :param val_df: Validating dataframe
         :param test_df: Testing dataframe
+        :param features: List of features on which to perform
         :return: Return robust scaled train, val, and test dataframes
     """
 
@@ -246,16 +260,16 @@ def apply_robust_scaler(
 
     scaler = RobustScaler()
 
-    train_df[FINAL_SELECTED_FEATURES] = scaler.fit_transform(
-        train_df[FINAL_SELECTED_FEATURES]
+    train_df[features] = scaler.fit_transform(
+        train_df[features]
     )
 
-    val_df[FINAL_SELECTED_FEATURES] = scaler.transform(
-        val_df[FINAL_SELECTED_FEATURES]
+    val_df[features] = scaler.transform(
+        val_df[features]
     )
 
-    test_df[FINAL_SELECTED_FEATURES] = scaler.transform(
-        test_df[FINAL_SELECTED_FEATURES]
+    test_df[features] = scaler.transform(
+        test_df[features]
     )
 
     return train_df, val_df, test_df
@@ -264,6 +278,8 @@ def preprocess_data(
     train_df: DataFrame,
     val_df: DataFrame,
     test_df: DataFrame,
+    log_features: list[str] = LOG_TRANSFORM_FEATURES,
+    scale_features: list[str] = FINAL_SELECTED_FEATURES
 ) -> tuple[DataFrame, DataFrame, DataFrame]:
     """
         Apply both log and robust scaler on the dataframes.
@@ -271,6 +287,8 @@ def preprocess_data(
         :param train_df: Training dataframe
         :param val_df: Validating dataframe
         :param test_df: Testing dataframe
+        :param log_features: List of features on which to perform log
+        :param scale_features: List of features on which to perform scaling
         :return: Return preprocessed train, val, and test dataframes
     """
 
@@ -278,9 +296,9 @@ def preprocess_data(
     val_df = val_df.copy()
     test_df = test_df.copy()
 
-    train_df, val_df, test_df = apply_log_transform(train_df, val_df, test_df)
+    train_df, val_df, test_df = apply_log_transform(train_df, val_df, test_df, features=log_features)
 
-    train_df, val_df, test_df = apply_robust_scaler(train_df, val_df, test_df)
+    train_df, val_df, test_df = apply_robust_scaler(train_df, val_df, test_df, features=scale_features)
 
     return train_df, val_df, test_df
 
