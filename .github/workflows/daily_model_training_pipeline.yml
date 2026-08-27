@@ -1,21 +1,21 @@
-name: Daily Pipeline
+name: Daily Model Training Pipeline
 
 on:
   workflow_dispatch:
 
   schedule:
-    - cron: '13 4 * * *'
+    - cron: '37 4 * * *'
 
 jobs:
-  run-daily-pipeline:
+  run-model_training-pipeline:
     runs-on: ubuntu-latest
 
     steps:
       - name: Set up Python environment
         uses: ./.github/actions/setup_python_env
 
-      - name: Run daily pipeline
+      - name: Run model training pipeline
         uses: ./.github/actions/run_pipeline
         with:
-          script: run_daily_pipeline.py
+          script: run_model_training.py
           hopsworks_api_key: ${{ secrets.HOPSWORKS_API_KEY }}
