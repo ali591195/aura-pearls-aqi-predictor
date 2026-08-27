@@ -11,3 +11,6 @@ progress-log.md
 # Virtual environments
 venv/
 
+models/*
+!models/.gitkeep
+

@@ -49,6 +49,9 @@ engineered_daily_fs = fs.get_or_create_feature_group(
     time_travel_format="HUDI", # Default was DELTA
 )
 
+# Getting Model Registry
+mr = project.get_model_registry()
+
 def insert_features(features: list[FeatureDict] | list[EngineeredFeatureDict],
                     feature_store: FeatureGroup | ExternalFeatureGroup | SpineGroup,
                     null_columns : list[str] | None = None) -> None:
