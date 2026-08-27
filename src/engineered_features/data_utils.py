@@ -55,7 +55,7 @@ def get_complete_raw_data(mode: FeatureEngineeringMode, backfill_start_date: dat
             yesterday = end_date - timedelta(days=1)
 
     expected_rows = int(
-        (today - prev_days_start).total_seconds() / 3600
+        (end_date - prev_days_start).total_seconds() / 3600
     )
 
     if mode == "BACKFILL" and backfill_end_date is not None:
