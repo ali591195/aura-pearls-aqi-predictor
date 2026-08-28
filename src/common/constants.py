@@ -1,3 +1,6 @@
+import subprocess
+from pathlib import Path
+
 # URLS
 OPENMETEO_AIRQUALITY_URL: str = "https://air-quality-api.open-meteo.com/v1/air-quality"
 OPENMETEO_WEATHER_URL: str = "https://api.open-meteo.com/v1/forecast"
@@ -18,6 +21,7 @@ TARGET_COLUMNS = [
         "target_aqi_day4",
 ]
 
+# Feature extraction baseline
 BASELINE_FEATURES = [
     "aqi_today",
     "pm25_today",
@@ -28,6 +32,7 @@ BASELINE_FEATURES = [
     "so2_today",
 ]
 
+# Feature extraction finalized features
 FINAL_SELECTED_FEATURES = [
     "pm25_today",
     "pm10_today",
@@ -58,6 +63,7 @@ FINAL_SELECTED_FEATURES = [
     "month",
 ]
 
+# Rightly skewed features from feature extraction finalized features
 LOG_TRANSFORM_FEATURES = [
     "co_today",
     "pm25_roll_mean_3",
@@ -66,6 +72,7 @@ LOG_TRANSFORM_FEATURES = [
     "pm10_roll_std_7",
 ]
 
+# All training features
 ALL_TRAINING_FEATURES = [
     "aqi_today",
     "aqi_lag_1",
@@ -118,6 +125,7 @@ ALL_TRAINING_FEATURES = [
     "aqi_change_rate",
 ]
 
+# All skewed features
 ALL_LOG_TRANSFORM_FEATURES = [
     "aqi_roll_std_3",
     "aqi_roll_std_7",
@@ -128,6 +136,7 @@ ALL_LOG_TRANSFORM_FEATURES = [
     "pm10_roll_std_7",
 ]
 
+# Selected feature sets for each day
 SELECTED_FEATURES_TARGET_1 = [
     "aqi_today",
     "aqi_lag_1",
@@ -161,7 +170,6 @@ SELECTED_FEATURES_TARGET_1 = [
     "so2_today",
     "no2_today",
 ]
-
 SELECTED_FEATURES_TARGET_2 = [
   "aqi_today",
   "aqi_lag_1",
@@ -192,7 +200,6 @@ SELECTED_FEATURES_TARGET_2 = [
   "temp_today",
   "temp_lag_1",
 ]
-
 SELECTED_FEATURES_TARGET_3 = [
   "aqi_today",
   "aqi_lag_1",
@@ -225,7 +232,6 @@ SELECTED_FEATURES_TARGET_3 = [
   "temp_today",
   "temp_lag_1",
 ]
-
 SELECTED_FEATURES_TARGET_4 = [
   "aqi_today",
   "aqi_lag_1",
@@ -272,3 +278,15 @@ SELECTED_FEATURES_LIST = [
 # Backfill start
 HISTORICAL_BACKFILL_START_DATE = "2022-08-05"
 HISTORICAL_BACKFILL_END_DATE = "2026-08-08"
+
+# Root directory
+ROOT_DIR = Path(
+    subprocess.check_output(
+        ["git", "rev-parse", "--show-toplevel"],
+        text=True,
+    ).strip()
+)
+
+# Model storing directory
+MODEL_DIR = ROOT_DIR / "models"
+MODEL_DIR.mkdir(exist_ok=True)
