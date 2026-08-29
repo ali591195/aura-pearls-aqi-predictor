@@ -1,0 +1,35 @@
+/* -------------------------------------------------- */
+/* Antarctic ice texture                              */
+/* -------------------------------------------------- */
+
+.ice-texture {
+  position: absolute;
+  inset: 0;
+
+  overflow: hidden;
+  pointer-events: none;
+
+  z-index: 0;
+
+  opacity: 0.9;
+}
+
+.ice-texture-svg {
+  position: absolute;
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+
+  filter: blur(0.15px);
+}
+
+.ice-texture {
+  --ice-primary: #dff7ff;
+  --ice-secondary: #22d3ee;
+}
+
+.ice-texture-light {
+  --ice-primary: #64748b;
+  --ice-secondary: #0891b2;
+}
