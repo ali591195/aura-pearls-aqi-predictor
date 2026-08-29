@@ -1,0 +1,33 @@
+#root {
+  min-height: 100vh;
+}
+
+.app {
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+
+  /* Remove overflow: hidden */
+}
+
+.app-layout {
+  position: relative;
+  z-index: 1;
+
+  display: flex;
+
+  min-height: 90vh;
+  width: 100%;
+}
+
+.main-content {
+  flex: 1;
+  min-width: 0;
+  padding: 10px 10px;
+}
+
+@media (max-width: 700px) {
+  .main-content {
+    padding: 20px 22px;
+  }
+}

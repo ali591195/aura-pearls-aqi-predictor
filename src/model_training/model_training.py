@@ -1,26 +1,14 @@
-import subprocess
-from pathlib import Path
-
+import joblib
 import tensorflow as tf
 from keras.src.callbacks import EarlyStopping
 
 from src.common.constants import SELECTED_FEATURES_LIST, TARGET_COLUMNS, ALL_LOG_TRANSFORM_FEATURES, \
-    ALL_TRAINING_FEATURES
+    ALL_TRAINING_FEATURES, MODEL_DIR
 from src.common.hopsworks_client import engineered_daily_fs, mr
 from src.common.schemas import DeepLearningFitParamSchema
-from src.model_training.data_utils import build_mlp_model
+from src.model_training.data_utils import build_mlp_model, fit_robust_scaler
 from src.modeling.data_utils import split_modeling_data, preprocess_data, train_and_evaluate_model, evaluate_model
 
-
-ROOT_DIR = Path(
-    subprocess.check_output(
-        ["git", "rev-parse", "--show-toplevel"],
-        text=True,
-    ).strip()
-)
-
-MODEL_DIR = ROOT_DIR / "models"
-MODEL_DIR.mkdir(exist_ok=True)
 
 def run_model_training() -> None:
     """
@@ -39,6 +27,11 @@ def run_model_training() -> None:
 
     # Split dataframe
     train_df, val_df, test_df = split_modeling_data(df)
+
+    train_df_copy = train_df.copy()
+
+    # Get scaler
+    scaler = fit_robust_scaler(train_df_copy, ALL_TRAINING_FEATURES)
 
     # Preprocess data
     train_df, val_df, test_df = preprocess_data(train_df, val_df, test_df, log_features=ALL_LOG_TRANSFORM_FEATURES,
@@ -104,3 +97,14 @@ def run_model_training() -> None:
 
         # Saving to model registry
         model_meta.save(str(model_path))
+
+    scaler_path = MODEL_DIR / "scaler.joblib"
+
+    joblib.dump(scaler, scaler_path)
+
+    scaler_meta = mr.tensorflow.create_model(
+        name="aqi_preprocessor",
+        description=f"AQI models robust scaler preprocessor."
+    )
+
+    scaler_meta.save(str(scaler_path))
