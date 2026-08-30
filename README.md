@@ -178,6 +178,7 @@ aura-pearls-aqi-predictor/
 ```bash
 # from repo root
 pip install -r requirements.txt
+pip install hopsworks==5.4 --no-deps
 ```
 
 Create a `.env` file in the root directory (see `.env.example`):

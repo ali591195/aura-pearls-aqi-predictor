@@ -1,3 +1,6 @@
+# hopsworks is intentionally NOT listed here — it conflicts with TensorFlow's
+# protobuf version under pip's dependency resolver. Install separately with
+# --no-deps after this file. See README / setup-python-env action.
 absl-py==2.5.0
 annotated-doc==0.0.5
 annotated-types==0.8.0
@@ -45,7 +48,6 @@ greenlet==3.5.4
 grpcio==1.83.0
 h11==0.16.0
 h5py==3.14.0
-hopsworks==5.0.4
 hopsworks-aiomysql==0.2.2
 hopsworks-apigen==1.0.5
 httpcore==1.0.9
