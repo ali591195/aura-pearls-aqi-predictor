@@ -13,7 +13,7 @@ import type { PredictionResponse } from "./components/PredictionCards";
 import "./App.css";
 
 const PREDICTION_API_URL =
-  "http://localhost:8000/api/prediction";
+  `http://${import.meta.env.VITE_BACKEND_HOST}:${import.meta.env.VITE_BACKEND_PORT}/api/prediction`;
 
 const PREDICTION_CACHE_KEY = "aura_prediction_cache";
 

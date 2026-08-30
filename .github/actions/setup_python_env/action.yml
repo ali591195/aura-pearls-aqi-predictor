@@ -4,9 +4,6 @@ description: Check out the repository, set up Python, and install project depend
 runs:
   using: composite
   steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
