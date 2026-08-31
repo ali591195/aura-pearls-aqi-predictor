@@ -200,6 +200,9 @@ app = "backend.app.main:app"
 [tool.fastapi-cli.run]
 app = "backend.app.main:app"
 
+[tool.fastapi]
+entrypoint = "backend.app.main:app"
+
 [[tool.uv.dependency-metadata]]
 name = "hopsworks"
 version = "5.0.4"
