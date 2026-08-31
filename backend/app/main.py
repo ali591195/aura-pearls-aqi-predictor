@@ -11,9 +11,18 @@ load_dotenv()
 
 app = FastAPI(title="Aura: Pearls AQI Predictor")
 
+frontend_host = os.getenv("FRONTEND_HOST", "localhost")
+frontend_port = os.getenv("FRONTEND_PORT")
+
+frontend_url = (
+    f"http://{frontend_host}:{frontend_port}"
+    if frontend_port
+    else f"https://{frontend_host}"
+)
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[f"http://{os.getenv("FRONTEND_HOST", "localhost")}localhost:{os.getenv("FRONTEND_PORT", "5173")}"],
+    allow_origins=[frontend_url],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

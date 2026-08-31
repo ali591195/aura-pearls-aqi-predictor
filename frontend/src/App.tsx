@@ -12,8 +12,12 @@ import type { PredictionResponse } from "./components/PredictionCards";
 
 import "./App.css";
 
-const PREDICTION_API_URL =
-  `http://${import.meta.env.VITE_BACKEND_HOST}:${import.meta.env.VITE_BACKEND_PORT}/api/prediction`;
+const backendHost = import.meta.env.VITE_BACKEND_HOST;
+const backendPort = import.meta.env.VITE_BACKEND_PORT;
+
+const PREDICTION_API_URL = backendPort
+  ? `http://${backendHost}:${backendPort}/api/prediction`
+  : `https://${backendHost}/api/prediction`;
 
 const PREDICTION_CACHE_KEY = "aura_prediction_cache";
 
