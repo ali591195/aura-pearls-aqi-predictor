@@ -280,12 +280,8 @@ HISTORICAL_BACKFILL_START_DATE = "2022-08-05"
 HISTORICAL_BACKFILL_END_DATE = "2026-08-08"
 
 # Root directory
-ROOT_DIR = Path(
-    subprocess.check_output(
-        ["git", "rev-parse", "--show-toplevel"],
-        text=True,
-    ).strip()
-)
+# New: derive root from this file's own location, no subprocess needed
+ROOT_DIR = Path(__file__).resolve().parents[2]
 
 # Model storing directory
 MODEL_DIR = ROOT_DIR / "models"

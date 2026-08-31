@@ -1,3 +1,0 @@
-from src.model_training.model_training import run_model_training
-
-run_model_training()
