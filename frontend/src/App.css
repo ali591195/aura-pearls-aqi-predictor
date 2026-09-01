@@ -31,3 +31,163 @@
     padding: 20px 22px;
   }
 }
+
+.card {
+  position: relative;
+  overflow: hidden;
+
+  background: rgba(255, 244, 227, 0.4);
+
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+
+  border: 1px solid rgba(255, 250, 240, 0.48);
+  border-radius: 8px;
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.72),
+    inset 0 0 22px rgba(255, 255, 255, 0.08),
+    0 12px 30px rgba(15, 23, 42, 0.07);
+
+  color: #0f172a;
+
+  transition:
+    transform 200ms ease,
+    box-shadow 200ms ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.78),
+    inset 0 0 24px rgba(255, 255, 255, 0.1),
+    0 16px 34px rgba(15, 23, 42, 0.1);
+}
+
+.card::before {
+  content: "";
+
+  position: absolute;
+  inset: 0;
+
+  background: var(--aqi-hue);
+
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+.card-symbol {
+  position: relative;
+  z-index: 1;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 38px;
+  height: 38px;
+
+  color: var(--aqi-symbol);
+}
+
+.card-symbol svg {
+  width: 25px;
+  height: 25px;
+
+  filter: drop-shadow(
+    0 1px 3px color-mix(in srgb, var(--aqi-symbol) 20%, transparent)
+  );
+}
+
+.card-label {
+  margin-top: 12px;
+
+  color: rgba(15, 23, 42, 0.55);
+
+  font-family: "Inter", sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.card-category {
+  margin-top: 6px;
+
+  color: #0f172a;
+
+  font-family: "Sora", sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.card-date {
+  color: rgba(15, 23, 42, 0.58);
+
+  font-family: "Inter", sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.card-top {
+  position: relative;
+  z-index: 1;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.card-label {
+  color: rgba(15, 23, 42, 0.62);
+
+  font-family: "Inter", sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* -------------------------------------------------- */
+/* AQI severity tint                                 */
+/* -------------------------------------------------- */
+
+.aqi-good {
+  --aqi-hue: rgba(16, 185, 129, 0.055);
+  --aqi-border: rgba(16, 185, 129, 0.28);
+  --aqi-symbol: #047857;
+}
+
+.aqi-moderate {
+  --aqi-hue: rgba(234, 179, 8, 0.055);
+  --aqi-border: rgba(234, 179, 8, 0.28);
+  --aqi-symbol: #a16207;
+}
+
+.aqi-sensitive {
+  --aqi-hue: rgba(249, 115, 22, 0.055);
+  --aqi-border: rgba(249, 115, 22, 0.28);
+  --aqi-symbol: #c2410c;
+}
+
+.aqi-unhealthy {
+  --aqi-hue: rgba(239, 68, 68, 0.055);
+  --aqi-border: rgba(239, 68, 68, 0.28);
+  --aqi-symbol: #b91c1c;
+}
+
+.aqi-very-unhealthy {
+  --aqi-hue: rgba(190, 24, 93, 0.055);
+  --aqi-border: rgba(190, 24, 93, 0.28);
+  --aqi-symbol: #9d174d;
+}
+
+.aqi-hazardous {
+  --aqi-hue: rgba(126, 34, 206, 0.06);
+  --aqi-border: rgba(126, 34, 206, 0.3);
+  --aqi-symbol: #6b21a8;
+}

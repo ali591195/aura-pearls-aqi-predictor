@@ -1,0 +1,81 @@
+.pollutant-card {
+  min-width: 0;
+
+  padding: 18px 20px;
+
+  background: rgba(255, 244, 227, 0.5);
+
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+
+  border: 1px solid rgba(255, 250, 240, 0.42);
+  border-radius: 8px;
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.7),
+    inset 0 0 22px rgba(255, 255, 255, 0.07),
+    0 10px 26px rgba(15, 23, 42, 0.06);
+}
+
+.pollutant-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 12px;
+}
+
+.pollutant-card-name {
+  color: #0f172a;
+
+  font-family: "Sora", sans-serif;
+  font-size: 15px;
+  font-weight: 650;
+}
+
+.pollutant-card-time {
+  color: rgba(15, 23, 42, 0.48);
+
+  font-family: "Inter", sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+
+  white-space: nowrap;
+}
+
+.pollutant-card-value-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+
+  margin-top: 18px;
+}
+
+.pollutant-card-value {
+  color: #0f172a;
+
+  font-family: "Sora", sans-serif;
+  font-size: 34px;
+  font-weight: 700;
+  line-height: 1;
+
+  letter-spacing: -0.05em;
+}
+
+.pollutant-card-unit {
+  color: rgba(15, 23, 42, 0.52);
+
+  font-family: "Inter", sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+@media (max-width: 700px) {
+  .pollutant-card {
+    padding: 16px 18px;
+  }
+
+  .pollutant-card-value {
+    font-size: 30px;
+  }
+}
