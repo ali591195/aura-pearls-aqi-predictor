@@ -10,7 +10,8 @@ import {
 } from "chart.js";
 import { Line } from "react-chartjs-2";
 
-import type { PredictionResponse } from "./PredictionCards";
+import type { PredictionResponse } from "./PredictionCards.tsx";
+import SectionHeader from "../common/SectionHeader.tsx";
 
 import "./TrendSection.css";
 
@@ -126,12 +127,10 @@ function TrendSection({ data }: TrendSectionProps) {
 
   return (
     <section className="trend-section">
-      <div className="trend-section-heading">
-        <div>
-          <h2>4-Day AQI Trend</h2>
-          <p>Predicted daily AQI mean</p>
-        </div>
-      </div>
+      <SectionHeader
+        title="4-Day AQI Trend"
+        subtitle="Predicted daily AQI mean"
+      />
 
       <div className="trend-chart-card">
         <div className="trend-chart">
