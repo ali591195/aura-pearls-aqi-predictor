@@ -1,0 +1,38 @@
+.air-quality-grid {
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.air-quality-grid-row {
+  width: 100%;
+
+  display: grid;
+  gap: 14px;
+}
+
+.air-quality-grid-row-aqi {
+  grid-template-columns: 1fr 1fr;
+}
+
+.air-quality-grid-row-pollutants {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+@media (max-width: 850px) {
+  .air-quality-grid-row-aqi {
+    grid-template-columns: 1fr;
+  }
+
+  .air-quality-grid-row-pollutants {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 560px) {
+  .air-quality-grid-row-pollutants {
+    grid-template-columns: 1fr;
+  }
+}

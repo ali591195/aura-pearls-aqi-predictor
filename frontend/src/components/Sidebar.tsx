@@ -1,35 +1,32 @@
 import type { ReactNode } from "react";
+import { NavLink } from "react-router-dom";
 import "./Sidebar.css";
 import IceTexture from "./IceTexture";
 
 type NavItemProps = {
   label: string;
   icon: ReactNode;
-  active?: boolean;
+  to?: string;
   disabled?: boolean;
-  onClick?: () => void;
 };
 
 function NavItem({
   label,
   icon,
-  active = false,
+  to,
   disabled = false,
-  onClick,
 }: NavItemProps) {
-  return (
-    <button
-      className={`sidebar-nav-item ${active ? "active" : ""} ${
-        disabled ? "disabled" : ""
-      }`}
-      type="button"
-      disabled={disabled}
-      onClick={onClick}
-    >
-      <span className="nav-icon">{icon}</span>
-      <span className="nav-label">{label}</span>
+  if (disabled) {
+    return (
+      <button
+        className="sidebar-nav-item disabled"
+        type="button"
+        disabled
+      >
+        <span className="nav-icon">{icon}</span>
 
-      {disabled && (
+        <span className="nav-label">{label}</span>
+
         <span className="nav-lock" aria-label="Coming soon">
           <svg
             viewBox="0 0 24 24"
@@ -39,12 +36,31 @@ function NavItem({
             strokeLinecap="round"
             strokeLinejoin="round"
           >
-            <rect x="5" y="10" width="14" height="10" rx="2" />
+            <rect
+              x="5"
+              y="10"
+              width="14"
+              height="10"
+              rx="2"
+            />
             <path d="M8 10V7a4 4 0 0 1 8 0v3" />
           </svg>
         </span>
-      )}
-    </button>
+      </button>
+    );
+  }
+
+  return (
+    <NavLink
+      to={to!}
+      className={({ isActive }) =>
+        `sidebar-nav-item ${isActive ? "active" : ""}`
+      }
+    >
+      <span className="nav-icon">{icon}</span>
+
+      <span className="nav-label">{label}</span>
+    </NavLink>
   );
 }
 
@@ -125,7 +141,7 @@ function Sidebar() {
       <IceTexture />
 
       <div className="sidebar-inner">
-        <button className="sidebar-brand" type="button">
+        <NavLink className="sidebar-brand" to="/">
           <img
             className="sidebar-logo"
             src="/logo.png"
@@ -138,32 +154,32 @@ function Sidebar() {
               Pearls AQI Predictor
             </span>
           </span>
-        </button>
+        </NavLink>
 
         <nav className="sidebar-navigation" aria-label="Main navigation">
-          <NavItem
-            label="Prediction"
-            icon={<PredictionIcon />}
-            active
-          />
+            <NavItem
+              label="Prediction"
+              icon={<PredictionIcon />}
+              to="/"
+            />
 
-          <NavItem
-            label="Stats"
-            icon={<StatsIcon />}
-            disabled
-          />
+            <NavItem
+              label="Stats"
+              icon={<StatsIcon />}
+              to="/stats"
+            />
 
-          <NavItem
-            label="City"
-            icon={<CityIcon />}
-            disabled
-          />
+            <NavItem
+              label="City"
+              icon={<CityIcon />}
+              disabled
+            />
 
-          <NavItem
-            label="Backfill"
-            icon={<BackfillIcon />}
-            disabled
-          />
+            <NavItem
+              label="Backfill"
+              icon={<BackfillIcon />}
+              disabled
+            />
         </nav>
       </div>
     </aside>

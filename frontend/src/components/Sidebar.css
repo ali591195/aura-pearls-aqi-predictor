@@ -54,6 +54,7 @@
 
   cursor: pointer;
   text-align: left;
+  text-decoration: none;
 }
 
 .sidebar-logo {
@@ -138,6 +139,8 @@
     border-color 220ms ease,
     box-shadow 220ms ease,
     transform 220ms ease;
+
+  text-decoration: none;
 }
 
 /* Ice surface on hover */

@@ -1,0 +1,59 @@
+.prediction-section {
+  width: 100%;
+  padding-top: 10px;
+}
+
+.prediction-refresh {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 40px;
+  height: 40px;
+
+  flex-shrink: 0;
+
+  border: none;
+  border-radius: 10px;
+
+  background: none;
+
+  color: #334155;
+
+  cursor: pointer;
+
+  transition:
+    background 180ms ease,
+    color 180ms ease;
+}
+
+.prediction-refresh:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.45);
+  color: #0f172a;
+}
+
+.prediction-refresh svg {
+  width: 19px;
+  height: 19px;
+}
+
+.prediction-refresh.loading svg {
+  animation: refresh-spin 900ms linear infinite;
+}
+
+.prediction-refresh:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
+
+@keyframes refresh-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 700px) {
+  .prediction-section {
+    margin-top: 18px;
+  }
+}

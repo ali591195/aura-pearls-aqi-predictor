@@ -1,3 +1,4 @@
+import SectionHeader from "../common/SectionHeader.tsx";
 import "./PredictionSection.css";
 
 type PredictionSectionProps = {
@@ -30,25 +31,24 @@ function PredictionSection({
 }: PredictionSectionProps) {
   return (
     <section className="prediction-section">
-      <div className="prediction-section-heading">
-        <div>
-          <h2>Air Quality Forecast</h2>
-          <p>Predicted AQI for the upcoming days</p>
-        </div>
-
-        <button
-          className={`prediction-refresh ${
-            loading ? "loading" : ""
-          }`}
-          type="button"
-          onClick={onRefresh}
-          disabled={loading}
-          aria-label="Refresh prediction"
-          title="Refresh prediction"
-        >
-          <RefreshIcon />
-        </button>
-      </div>
+      <SectionHeader
+        title="Air Quality Forecast"
+        subtitle="Predicted AQI for the upcoming days"
+        action={
+          <button
+            className={`prediction-refresh ${
+              loading ? "loading" : ""
+            }`}
+            type="button"
+            onClick={onRefresh}
+            disabled={loading}
+            aria-label="Refresh prediction"
+            title="Refresh prediction"
+          >
+            <RefreshIcon />
+          </button>
+        }
+      />
     </section>
   );
 }

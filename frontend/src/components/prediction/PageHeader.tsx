@@ -1,4 +1,4 @@
-import PageHeaderIce from "./PageHeaderIce";
+import PageHeaderIce from "./PageHeaderIce.tsx";
 import "./PageHeader.css";
 
 type PageHeaderProps = {
