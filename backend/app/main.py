@@ -1,10 +1,18 @@
 import os
 
+from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from dotenv import load_dotenv
 
-from backend.app.routes.prediction import router as prediction_router
+from backend.app.routes.prediction import (
+    router as prediction_router,
+)
+from backend.app.routes.current_air_quality import (
+    router as current_air_quality_router,
+)
+from backend.app.routes.current_weather import (
+    router as current_weather_router,
+)
 
 
 load_dotenv()
@@ -29,6 +37,8 @@ app.add_middleware(
 )
 
 app.include_router(prediction_router)
+app.include_router(current_air_quality_router)
+app.include_router(current_weather_router)
 
 
 @app.get("/")
