@@ -8,7 +8,7 @@ Built as the capstone project for the **10Pearls Shine Internship Program** (Dat
 ![Python](https://img.shields.io/badge/python-3.13-blue.svg)
 ![FastAPI](https://img.shields.io/badge/backend-FastAPI-009688.svg)
 ![React](https://img.shields.io/badge/frontend-React%20%2B%20Vite-61DAFB.svg)
-![Status](https://img.shields.io/badge/status-in%20development-yellow.svg)
+![Status](https://img.shields.io/badge/status-live-brightgreen.svg)
 
 ---
 
@@ -20,6 +20,10 @@ Aura predicts Lahore's Air Quality Index for the next four days using an automat
 ![Aura dashboard — Prediction page](docs/images/dashboard.png)
 
 For the full project write-up — architecture rationale, methodology, challenges encountered, and limitations — see [`docs/documentation.pdf`](docs/documentation.pdf).
+
+## Live Demo
+- **Dashboard:** https://aura-aqi.vercel.app/
+- **API:** https://aura-pearls-aqi-predictor.fastapicloud.dev/
 
 ---
 
@@ -53,17 +57,19 @@ This follows the **FTI (Feature / Training / Inference) pipeline pattern**: feat
 
 ## Tech Stack & Rationale
 
-| Layer | Choice | Why |
-|---|---|---|
-| Feature store / model registry | **Hopsworks** | Genuine free tier, purpose-built for the FTI pipeline pattern, no billing account required |
-| Scheduler | **GitHub Actions** | Serverless by nature — Apache Airflow was the alternative, but it needs a persistently hosted server, which conflicts with the project's "100% serverless" requirement |
-| Data source | **Open-Meteo** (Air Quality + Forecast APIs) | Free historical hourly data going back to Aug 2022 for Lahore; migrated from AQICN/OpenWeather after discovering neither offered free historical access needed for model training |
-| Backend | **FastAPI** | Brief allows Flask or FastAPI — FastAPI chosen for async support, Pydantic request/response validation, and auto-generated OpenAPI docs |
-| Frontend | **Vite + React + TypeScript** | Brief allows Streamlit/Gradio or a custom UI — React chosen for full design control over the custom aurora/glassmorphism dashboard |
-| Baseline models | **Scikit-learn** (Random Forest, Ridge Regression) | Required by the brief as a statistical baseline against the deep learning approach |
-| Deep learning model | **TensorFlow** (Dense NN / MLP) | Required by the brief to compare statistical vs. deep learning approaches; LSTM was scoped as a stretch goal and not pursued (see Limitations) |
-| Explainability | **SHAP** (`shap.DeepExplainer`) | Required by the brief |
+| Layer | Choice | Why                                                                                                                                                                                               |
+|---|---|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Feature store / model registry | **Hopsworks** | Genuine free tier, purpose-built for the FTI pipeline pattern, no billing account required                                                                                                        |
+| Scheduler | **GitHub Actions** | Serverless by nature — Apache Airflow was the alternative, but it needs a persistently hosted server, which conflicts with the project's "100% serverless" requirement                            |
+| Data source | **Open-Meteo** (Air Quality + Forecast APIs) | Free historical hourly data going back to Aug 2022 for Lahore; migrated from AQICN/OpenWeather after discovering neither offered free historical access needed for model training                 |
+| Backend | **FastAPI** | Brief allows Flask or FastAPI — FastAPI chosen for async support, Pydantic request/response validation, and auto-generated OpenAPI docs                                                           |
+| Frontend | **Vite + React + TypeScript** | Brief allows Streamlit/Gradio or a custom UI — React chosen for full design control over the custom aurora/glassmorphism dashboard                                                                |
+| Baseline models | **Scikit-learn** (Random Forest, Ridge Regression) | Required by the brief as a statistical baseline against the deep learning approach                                                                                                                |
+| Deep learning model | **TensorFlow** (Dense NN / MLP) | Required by the brief to compare statistical vs. deep learning approaches; LSTM was scoped as a stretch goal and not pursued (see Limitations)                                                    |
+| Explainability | **SHAP** (`shap.DeepExplainer`) | Required by the brief                                                                                                                                                                             |
 | AQI computation | **Open-Meteo's native `us_aqi` field** | Originally computed locally via US EPA breakpoint methodology; superseded once discovered Open-Meteo provides it natively. Original EPA logic preserved in `src/archived/epa_aqi/` for reference. |
+| Frontend hosting | **Vercel** | Free tier, zero-config Vite/React deploys, monorepo support via root directory config                                                                                                             |
+| Backend hosting | **FastAPI Cloud** | Official hosting platform from the FastAPI maintainers                                                                                                                                            |
 
 ---
 
@@ -76,6 +82,7 @@ This follows the **FTI (Feature / Training / Inference) pipeline pattern**: feat
 - Hazardous AQI alerting built directly into the dashboard: each forecast card's hue, symbol, and border/symbol color respond dynamically to that day's AQI severity level
 - Aurora-themed, glassmorphism dashboard built as a custom React UI
 - All ingestion and recovery pipelines (hourly, daily, weekly, monthly engineered) manually run and verified end-to-end
+- Full Statistics page: live current AQI, today's prediction, per-pollutant readings (PM10, PM2.5, CO, NO₂, SO₂, O₃), and current weather conditions (temperature, humidity, pressure, wind speed, dew point), each timestamped
 
 ---
 
@@ -123,21 +130,31 @@ aura-pearls-aqi-predictor/
 │       ├── services/
 │       │   ├── feature_service.py
 │       │   ├── model_service.py
-│       │   └── prediction_service.py
+│       │   ├── prediction_service.py
+│       │   └── ...
 │       ├── routes/
-│       │   └── prediction.py
+│       │   ├── prediction.py
+│       │   ├── current_air_quality.py
+│       │   └── current_weather.py
 │       └── schemas/
-│           └── prediction.py
+│           ├── prediction.py
+│       │   ├── current_air_quality.py
+│       │   └── current_weather.py
 ├── frontend/
 │   ├── src/
 │   │   ├── App.tsx
+│   │   ├── pages/
+│   │   │   ├── PredictionPage.tsx
+│   │   │   └── StatsPage.tsx
 │   │   ├── components/
 │   │   │   ├── Aurora.tsx        # aurora background (wave-based)
 │   │   │   ├── Sidebar.tsx       # + IceTexture (cracked-ice, refraction)
-│   │   │   ├── PageHeader.tsx    # + PageHeaderIce
-│   │   │   └── ...               # footer + prediction card components + css files
+│   │   │   ├── common/           # contain reusable components
+│   │   │   ├── prediction/       # components related to prediction page
+│   │   │   └── ...               # footer + stats directory + sidebar ice texture + css files
 │   │   ├── assets/
-│   │   └── ...                   # other files
+│   │   ├── hooks/                # useCurrentAirQuality, useCurrentWeather, usePrediction
+│   │   └── ...                   # other files + utils directory
 │   ├── public/
 │   │   └── logo.png
 │   └── ...
@@ -145,10 +162,7 @@ aura-pearls-aqi-predictor/
 │   ├── feature_pipeline/         # hourly ingestion
 │   ├── engineered_features/      # daily feature engineering
 │   ├── model_training/           # training pipeline, MLP build logic
-│   ├── modeling/                 # shared training/eval utilities
-│   ├── common/                   # shared schemas, constants, Hopsworks client
-│   ├── backfill/                 # backfill
-│   └── archived/epa_aqi/         # superseded local AQI computation
+│   └── ...                       # modeling + common + backfill + archived
 ├── notebooks/                  
 │   ├── eda/                      # EDA, feature experiments, model experimentation, SHAP
 │   └── model_experimentation/    # model experimentation, SHAP
@@ -158,6 +172,8 @@ aura-pearls-aqi-predictor/
 ├── scripts/                                          
 ├── docs/images/                  # README visuals
 ├── requirements.txt
+├── pyproject.toml                # uv-based dependency set, used only for FastAPI Cloud deployment
+├── uv.lock
 ├── .env.example
 ├── LICENSE (MIT)
 ├── README.md
@@ -174,6 +190,8 @@ aura-pearls-aqi-predictor/
 - A [Hopsworks](https://www.hopsworks.ai/) account and API key
 
 ### Backend
+
+> Two dependency setups exist for two different purposes: `requirements.txt` (pip) is used for local development and all GitHub Actions pipelines. A separate `pyproject.toml` + `uv.lock` (uv) exists solely for the FastAPI Cloud deployment target, since that platform resolves dependencies via `uv`. Use `requirements.txt` for local dev below; the deployment path is documented in `docs/documentation.pdf`.
 
 ```bash
 # from repo root
@@ -233,7 +251,6 @@ By default, this serves on `http://localhost:5173` (Vite's default dev port).
 
 ## Roadmap
 
-- Stats page (sidebar entry exists, locked)
 - City-selection page (sidebar entry exists, locked) — pending a feasibility check on whether 7 days of prior history can be backfilled on-demand for an arbitrary new city
 - LSTM model as a deep learning stretch goal (scoped in the original plan, not pursued due to limited data volume relative to tuning cost)
 
