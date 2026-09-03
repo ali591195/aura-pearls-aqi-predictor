@@ -1,0 +1,101 @@
+.backfill-ice-texture {
+  --backfill-ice-primary: #182b34;
+  --backfill-ice-secondary: #10232b;
+
+  position: absolute;
+
+  left: -3%;
+  bottom: -4%;
+
+  width: 78%;
+  height: 92%;
+
+  overflow: hidden;
+  pointer-events: none;
+
+  z-index: 0;
+
+  opacity: 1;
+
+  mask-image: radial-gradient(
+    ellipse 82% 90% at 18% 88%,
+    #000 0%,
+    #000 48%,
+    rgba(0, 0, 0, 0.92) 64%,
+    rgba(0, 0, 0, 0.52) 80%,
+    transparent 100%
+  );
+
+  -webkit-mask-image: radial-gradient(
+    ellipse 82% 90% at 18% 88%,
+    #000 0%,
+    #000 48%,
+    rgba(0, 0, 0, 0.92) 64%,
+    rgba(0, 0, 0, 0.52) 80%,
+    transparent 100%
+  );
+}
+
+.backfill-ice-texture-svg {
+  position: absolute;
+
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+
+  display: block;
+
+  filter: blur(0.1px);
+}
+
+.backfill-ice-texture-top-right {
+  --backfill-ice-primary: #182b34;
+  --backfill-ice-secondary: #10232b;
+
+  position: absolute;
+
+  top: -4%;
+  right: -3%;
+
+  width: 78%;
+  height: 92%;
+
+  overflow: hidden;
+  pointer-events: none;
+
+  z-index: 0;
+
+  opacity: 1;
+
+  mask-image: radial-gradient(
+    ellipse 86% 92% at 88% 12%,
+    #000 0%,
+    #000 44%,
+    rgba(0, 0, 0, 0.90) 60%,
+    rgba(0, 0, 0, 0.50) 78%,
+    transparent 100%
+  );
+
+  -webkit-mask-image: radial-gradient(
+    ellipse 86% 92% at 88% 12%,
+    #000 0%,
+    #000 44%,
+    rgba(0, 0, 0, 0.90) 60%,
+    rgba(0, 0, 0, 0.50) 78%,
+    transparent 100%
+  );
+}
+
+.backfill-ice-texture-top-right-svg {
+  position: absolute;
+
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+
+  display: block;
+
+  filter: blur(0.1px);
+}

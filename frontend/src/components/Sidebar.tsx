@@ -178,7 +178,7 @@ function Sidebar() {
             <NavItem
               label="Backfill"
               icon={<BackfillIcon />}
-              disabled
+              to="/backfill"
             />
         </nav>
       </div>

@@ -28,3 +28,29 @@ export function getBackendApiUrl(
 
   return `${baseUrl}${endpoint}`;
 }
+
+export async function postApi<T>(
+  url: string,
+  errorMessage: string,
+): Promise<T> {
+  const response = await fetch(url, {
+    method: "POST",
+  });
+
+  if (!response.ok) {
+    let detail = "";
+
+    try {
+      const body = await response.json();
+      detail = body?.detail ?? "";
+    } catch {
+      // Ignore invalid error bodies.
+    }
+
+    throw new Error(
+      detail || `${errorMessage}: ${response.status}`,
+    );
+  }
+
+  return response.json() as Promise<T>;
+}

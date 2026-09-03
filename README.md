@@ -51,7 +51,7 @@ flowchart TD
 
 This follows the **FTI (Feature / Training / Inference) pipeline pattern**: feature computation, model training, and inference are decoupled and each read/write through the Hopsworks Feature Store and Model Registry rather than passing data directly between stages.
 
-> **Note on automation:** the 7 GitHub Actions workflows (hourly ingestion + daily/weekly/monthly recovery + daily model training) were intentionally paused mid-development after hitting ~80% of the Hopsworks free-tier compute quota, to avoid running out before submission. Every pipeline was manually run and verified working during the pause — `raw_hourly_readings` and `daily_engineered_features` were kept current through manual backfill in the meantime. Workflows are re-enabled for submission so scheduled automation runs live.
+> **Note on automation:** the 7 GitHub Actions workflows (hourly ingestion + daily/weekly/monthly recovery + daily model training) were intentionally paused mid-development after hitting ~80% of the Hopsworks free-tier compute quota, to avoid running out before submission. Every pipeline was manually run and verified working during the pause — `raw_hourly_readings` and `daily_engineered_features` were kept current through manual backfill in the meantime. Workflows remain disabled through submission; instead, an on-demand backfill flow (triggered from the dashboard's Backfill page or directly via `api/backfill/raw` and `api/backfill/engineered`) brings both feature stores up to date and retrains the model, without relying on the paused scheduled automation.
 
 ---
 
@@ -83,6 +83,8 @@ This follows the **FTI (Feature / Training / Inference) pipeline pattern**: feat
 - Aurora-themed, glassmorphism dashboard built as a custom React UI
 - All ingestion and recovery pipelines (hourly, daily, weekly, monthly engineered) manually run and verified end-to-end
 - Full Statistics page: live current AQI, today's prediction, per-pollutant readings (PM10, PM2.5, CO, NO₂, SO₂, O₃), and current weather conditions (temperature, humidity, pressure, wind speed, dew point), each timestamped
+- On-demand data recovery: a Backfill page detects whether the feature stores are behind and lets the user trigger a raw + engineered backfill and model retrain directly from the dashboard, with live progress and state feedback
+- Stale-data awareness: Prediction and Stats pages detect out-of-date predictions and surface a notification card with a direct link to Backfill.
 
 ---
 
@@ -135,25 +137,29 @@ aura-pearls-aqi-predictor/
 │       ├── routes/
 │       │   ├── prediction.py
 │       │   ├── current_air_quality.py
-│       │   └── current_weather.py
-│       └── schemas/
-│           ├── prediction.py
+│       │   ├── current_weather.py
+│       │   └── ...
+│       ├── schemas/
+│       │   ├── prediction.py
 │       │   ├── current_air_quality.py
-│       │   └── current_weather.py
+│       │   ├── current_weather.py
+│       │   └── ...
+│       └── ...                   # utils etc
 ├── frontend/
 │   ├── src/
 │   │   ├── App.tsx
 │   │   ├── pages/
 │   │   │   ├── PredictionPage.tsx
+│   │   │   ├── BackfillPage.tsx
 │   │   │   └── StatsPage.tsx
 │   │   ├── components/
 │   │   │   ├── Aurora.tsx        # aurora background (wave-based)
 │   │   │   ├── Sidebar.tsx       # + IceTexture (cracked-ice, refraction)
 │   │   │   ├── common/           # contain reusable components
 │   │   │   ├── prediction/       # components related to prediction page
-│   │   │   └── ...               # footer + stats directory + sidebar ice texture + css files
+│   │   │   └── ...               # footer, backfill, stats directory etc
 │   │   ├── assets/
-│   │   ├── hooks/                # useCurrentAirQuality, useCurrentWeather, usePrediction
+│   │   ├── hooks/                # useCurrentAirQuality, useCurrentWeather, usePrediction, etc
 │   │   └── ...                   # other files + utils directory
 │   ├── public/
 │   │   └── logo.png
@@ -239,6 +245,8 @@ npm run dev
 ```
 
 By default, this serves on `http://localhost:5173` (Vite's default dev port).
+
+> Note: `frontend/vercel.json` is required for correct routing on Vercel — without it, React Router routes 404 on refresh/direct navigation.
 
 ---
 

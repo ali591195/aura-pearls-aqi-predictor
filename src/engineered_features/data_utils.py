@@ -94,7 +94,7 @@ def get_complete_raw_data(mode: FeatureEngineeringMode, backfill_start_date: dat
         elif mode == "NORMAL":
             run_daily_recovery()
 
-        elif mode == "BACKFILL":
+        elif mode == "BACKFILL" and len(required_rows) < expected_rows:
             print("Not enough rows. First, run historical backfill manually on the current range. Then, try again.")
             return None
 

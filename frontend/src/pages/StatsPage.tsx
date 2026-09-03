@@ -1,6 +1,6 @@
 import useCurrentAirQuality from "../hooks/useCurrentAirQuality";
 import usePrediction from "../hooks/usePrediction";
-import PageHeader from "../components/prediction/PageHeader.tsx";
+import PageHeader from "../components/common/PageHeader.tsx";
 import AirQualitySection from "../components/stats/AirQualitySection.tsx";
 import AirQualityGrid from "../components/stats/AirQualityGrid.tsx";
 import TodayPredictionCard from "../components/stats/TodayPredictionCard.tsx";

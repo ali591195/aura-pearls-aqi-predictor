@@ -1,0 +1,194 @@
+.backfill-button {
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+
+  width: 50%;
+  min-height: 52px;
+
+  margin-top: 28px;
+
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 12px;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(10, 16, 29, 0.95),
+      rgba(6, 11, 20, 0.98)
+    );
+
+  color: #eef4f8;
+
+  font-family: "Inter", sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.12);
+
+  animation:
+    backfill-button-float 3.2s ease-in-out infinite;
+
+  transition:
+    border-color 900ms ease,
+    background 900ms ease,
+    box-shadow 1100ms ease,
+    color 800ms ease;
+}
+
+.backfill-button::before {
+  content: "";
+
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+
+  border-radius: inherit;
+
+  background:
+    linear-gradient(
+      115deg,
+      rgba(16, 234, 148, 0.16),
+      rgba(16, 234, 148, 0.08),
+      rgba(93, 220, 255, 0.16),
+      rgba(121, 170, 255, 0.08),
+      rgba(155, 124, 255, 0.16),
+      rgba(93, 220, 255, 0.08),
+      rgba(16, 234, 148, 0.16)
+    );
+
+  background-size: 300% 300%;
+
+  opacity: 0;
+
+  animation:
+    backfill-button-aurora 8s ease-in-out infinite;
+
+  transition:
+    opacity 1000ms ease;
+}
+
+.backfill-button::after {
+  content: "";
+
+  position: absolute;
+  inset: 1px;
+  z-index: -1;
+
+  border-radius: 11px;
+
+  background:
+    radial-gradient(
+      ellipse at 50% 50%,
+      rgba(16, 234, 148, 0.06),
+      rgba(93, 220, 255, 0.03) 45%,
+      transparent 75%
+    );
+
+  opacity: 0;
+
+  transition:
+    opacity 1000ms ease;
+}
+
+.backfill-button:hover:not(:disabled) {
+  border-color: rgba(135, 240, 255, 0.58);
+
+  background:
+    linear-gradient(
+      110deg,
+      rgba(5, 31, 33, 0.98),
+      rgba(7, 25, 38, 0.98),
+      rgba(24, 18, 42, 0.98)
+    );
+
+  color: #ffffff;
+
+  box-shadow:
+    0 0 8px rgba(16, 234, 148, 0.42),
+    0 0 18px rgba(93, 220, 255, 0.28),
+    0 0 32px rgba(155, 124, 255, 0.16),
+    inset 0 0 18px rgba(16, 234, 148, 0.08),
+    inset 0 0 32px rgba(93, 220, 255, 0.05);
+}
+
+.backfill-button:hover:not(:disabled)::before {
+  opacity: 1;
+}
+
+.backfill-button:hover:not(:disabled)::after {
+  opacity: 1;
+}
+
+.backfill-button:active:not(:disabled) {
+  box-shadow:
+    0 0 7px rgba(16, 234, 148, 0.38),
+    0 0 16px rgba(93, 220, 255, 0.25),
+    inset 0 0 16px rgba(16, 234, 148, 0.1);
+}
+
+.backfill-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.62;
+
+  animation: none;
+}
+
+.backfill-button:disabled::before,
+.backfill-button:disabled::after {
+  animation: none;
+  opacity: 0;
+}
+
+.backfill-button:focus-visible {
+  outline: 2px solid rgba(93, 220, 255, 0.55);
+  outline-offset: 3px;
+}
+
+@keyframes backfill-button-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes backfill-button-aurora {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  25% {
+    background-position: 100% 25%;
+  }
+
+  50% {
+    background-position: 100% 100%;
+  }
+
+  75% {
+    background-position: 0% 75%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@media (max-width: 700px) {
+  .backfill-button {
+    width: 70%;
+  }
+}
+
+@media (max-width: 480px) {
+  .backfill-button {
+    width: 100%;
+  }
+}
