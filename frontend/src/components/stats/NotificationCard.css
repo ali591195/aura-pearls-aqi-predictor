@@ -1,0 +1,141 @@
+.notification-card {
+  flex: 1;
+
+  min-width: 0;
+  min-height: 300px;
+
+  padding: 26px 28px;
+}
+
+.notification-card-content {
+  position: relative;
+  z-index: 1;
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+
+  width: 100%;
+  min-height: 248px;
+}
+
+.notification-card h2 {
+  width: 100%;
+  margin: 0;
+
+  color: #0f172a;
+
+  font-family: "Sora", sans-serif;
+  font-size: clamp(24px, 2.4vw, 32px);
+  font-weight: 650;
+  line-height: 1.15;
+  letter-spacing: -0.045em;
+}
+
+.notification-card h2 span {
+  position: relative;
+
+  display: inline-block;
+}
+
+.notification-card h2 span::after {
+  content: "";
+
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -3px;
+
+  height: 4px;
+
+  background: #0f172a;
+
+  border-radius: 999px;
+}
+
+.notification-card p {
+  width: 100%;
+  max-width: 500px;
+
+  margin: 14px 0 0;
+
+  color: rgba(15, 23, 42, 0.58);
+
+  font-family: "Inter", sans-serif;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.notification-card-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 38px;
+  margin-top: 22px;
+  padding: 0 17px;
+
+  border: 1.5px solid rgba(15, 23, 42, 0.28);
+  border-radius: 8px;
+
+  color: #0f172a;
+
+  font-family: "Inter", sans-serif;
+  font-size: 12px;
+  font-weight: 650;
+
+  text-decoration: none;
+
+  cursor: pointer;
+
+  transition:
+    background 180ms ease,
+    color 180ms ease,
+    border-color 180ms ease,
+    transform 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.notification-card-action:hover {
+  transform: translateY(-2px);
+
+  border-color: rgba(15, 23, 42, 0.2);
+
+  background: rgba(255, 255, 255, 0.5);
+
+  color: #0f172a;
+}
+
+.notification-card-action:focus-visible {
+  outline: 2px solid rgba(93, 220, 255, 0.55);
+  outline-offset: 3px;
+}
+
+@media (max-width: 900px) {
+  .notification-card {
+    min-height: 270px;
+  }
+
+  .notification-card-content {
+    min-height: 218px;
+  }
+
+  .notification-card h2 {
+    font-size: 26px;
+  }
+}
+
+@media (max-width: 600px) {
+  .notification-card {
+    padding: 22px;
+  }
+
+  .notification-card-content {
+    min-height: 226px;
+  }
+
+  .notification-card h2 {
+    font-size: 22px;
+  }
+}
