@@ -6,6 +6,7 @@ from backend.app.schemas.current_air_quality import (
 from backend.app.services.current_air_quality import (
     fetch_current_air_quality,
 )
+from backend.app.utils.routes import raise_bad_gateway_error
 
 router = APIRouter(
     prefix="/api",
@@ -17,12 +18,9 @@ router = APIRouter(
     "/current-air-quality",
     response_model=CurrentAirQualityResponse,
 )
-def get_current_air_quality() -> CurrentAirQualityResponse:
+def get_current_air_quality() -> CurrentAirQualityResponse | None:
     try:
         return fetch_current_air_quality()
 
     except RuntimeError as error:
-        raise HTTPException(
-            status_code=502,
-            detail=str(error),
-        ) from error
+        raise_bad_gateway_error(error)
