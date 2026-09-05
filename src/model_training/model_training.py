@@ -1,13 +1,14 @@
 import joblib
+import pandas as pd
 import tensorflow as tf
 from keras.src.callbacks import EarlyStopping
 
-from src.common.constants import SELECTED_FEATURES_LIST, TARGET_COLUMNS, ALL_LOG_TRANSFORM_FEATURES, \
-    ALL_TRAINING_FEATURES, MODEL_DIR
+from src.common.constants import TARGET_COLUMNS, ALL_LOG_TRANSFORM_FEATURES, \
+    ALL_TRAINING_FEATURES, MODEL_DIR, LATEST_SELECTED_FEATURES_LIST
 from src.common.hopsworks_client import engineered_daily_fs, mr
-from src.common.schemas import DeepLearningFitParamSchema
-from src.model_training.data_utils import build_mlp_model, fit_robust_scaler
-from src.modeling.data_utils import split_modeling_data, preprocess_data, train_and_evaluate_model, evaluate_model
+from src.model_training.data_utils import fit_robust_scaler, get_day_1_model, get_day_2_model, \
+    get_day_3_model, get_day_4_model
+from src.modeling.data_utils import split_modeling_data, preprocess_data, evaluate_model
 
 
 def run_model_training() -> None:
@@ -34,8 +35,18 @@ def run_model_training() -> None:
     scaler = fit_robust_scaler(train_df_copy, ALL_TRAINING_FEATURES)
 
     # Preprocess data
-    train_df, val_df, test_df = preprocess_data(train_df, val_df, test_df, log_features=ALL_LOG_TRANSFORM_FEATURES,
+    train_df_preprocess, val_df_preprocess, test_df_preprocess = preprocess_data(train_df, val_df, test_df, log_features=ALL_LOG_TRANSFORM_FEATURES,
                                                 scale_features=ALL_TRAINING_FEATURES)
+
+    train_val_df = pd.concat(
+        [train_df, val_df],
+        axis=0,
+    ).sort_values("ts").reset_index(drop=True)
+
+    train_val_df_preprocess = pd.concat(
+        [train_df_preprocess, val_df_preprocess],
+        axis=0,
+    ).sort_values("ts").reset_index(drop=True)
 
     tf.keras.utils.set_random_seed(42)
 
@@ -45,36 +56,52 @@ def run_model_training() -> None:
         restore_best_weights=True,
     )
 
-    mlp_base_model_fit_params: DeepLearningFitParamSchema = {
-        "epochs": 500,
-        "batch_size": 32,
-        "callbacks": [early_stopping],
-        "verbose": 1
-    }
+    models = []
+
+    day_1_model = get_day_1_model()
+    models.append((day_1_model, "XGBoost", "xgboost"))
+
+    day_2_model = get_day_2_model()
+    models.append((day_2_model, "MLP", "mlp"))
+
+    day_3_model = get_day_3_model()
+    models.append((day_3_model, "LightGBM", "lightgbm"))
+
+    day_4_model = get_day_4_model()
+    models.append((day_4_model, "Random Forest", "rf"))
 
     # For each feature sets per model
-    for i, features_list in enumerate(SELECTED_FEATURES_LIST):
+    for i, features_list in enumerate(LATEST_SELECTED_FEATURES_LIST):
         labels = [TARGET_COLUMNS[i]]
-        total_features = len(features_list)
 
-        # Get mlp model
-        model = build_mlp_model(total_features)
+        if models[i][1] == "MLP":
+            X_train = train_df_preprocess[features_list]
+            y_train = train_df_preprocess[labels].to_numpy().ravel()
 
-        # Get metrics and train the model
-        result = train_and_evaluate_model(
-            train_df, val_df, disable_plot=True, baseline=features_list, model=model, output_labels=labels,
-            toggle_evaluate_print=True, deep_learning=mlp_base_model_fit_params
-        )
+            X_val = val_df_preprocess[features_list]
+            y_val = val_df_preprocess[labels].to_numpy().ravel()
 
-        # Get the trained model
-        model = result[0]
+            X_test = test_df_preprocess[features_list]
+            y_test = test_df_preprocess[labels].to_numpy().ravel()
 
-        # Predict on test and get metrics
-        X_test = test_df[features_list]
+            models[i][0].fit(
+                X_train,
+                y_train,
+                validation_data=(X_val, y_val),
+                epochs=500,
+                batch_size=32,
+                callbacks=[early_stopping]
+            )
+        else:
+            X_train = train_val_df[features_list]
+            y_train = train_val_df[labels].to_numpy().ravel()
 
-        y_test_pred = model.predict(X_test)
+            X_test = test_df[features_list]
+            y_test = test_df[labels].to_numpy().ravel()
 
-        y_test = test_df[labels].squeeze()
+            models[i][0].fit(X_train, y_train)
+
+        y_test_pred = models[i][0].predict(X_test)
 
         rmse, mae, r2 = evaluate_model(y_test, y_test_pred, toggle_print=True, labels=labels)
 
@@ -84,25 +111,56 @@ def run_model_training() -> None:
             "r2": r2[0],
         }
 
-        # Saving model
-        model_path = MODEL_DIR / f"aqi_mlp_day_{i + 1}.keras"
-        model.save(model_path)
+        # Saving model & creating meta data
+        if models[i][1] == "Random Forest":
+            name = f"aqi_{models[i][2]}_day_{i + 1}"
+            model_path = str(MODEL_DIR / f"{name}.joblib")
+            joblib.dump(models[i][0], model_path)
 
-        # Creating meta data
-        model_meta = mr.tensorflow.create_model(
-            name=f"aqi_mlp_day_{i + 1}",
-            metrics=metrics,
-            description=f"AQI Day {i + 1} Predictor"
-        )
+            model_meta = mr.sklearn.create_model(
+                name=name,
+                metrics=metrics,
+                description=f"AQI Day {i + 1} Predictor"
+            )
+        elif models[i][1] == "XGBoost":
+            name = f"aqi_{models[i][2]}_day_{i + 1}"
+            model_path = str(MODEL_DIR / f"{name}.json")
+            models[i][0].save_model(model_path)
+
+            model_meta = mr.python.create_model(
+                name=name,
+                metrics=metrics,
+                description=f"AQI Day {i + 1} Predictor"
+            )
+        elif models[i][1] == "LightGBM":
+            name = f"aqi_{models[i][2]}_day_{i + 1}"
+            model_path = str(MODEL_DIR / f"{name}.txt")
+            models[i][0].booster_.save_model(model_path)
+
+            model_meta = mr.python.create_model(
+                name=name,
+                metrics=metrics,
+                description=f"AQI Day {i + 1} Predictor"
+            )
+        elif models[i][1] == "MLP":
+            name = f"aqi_{models[i][2]}_day_{i + 1}"
+            model_path = str(MODEL_DIR / f"{name}.keras")
+            models[i][0].save(model_path)
+
+            model_meta = mr.tensorflow.create_model(
+                name=name,
+                metrics=metrics,
+                description=f"AQI Day {i + 1} Predictor"
+            )
 
         # Saving to model registry
-        model_meta.save(str(model_path))
+        model_meta.save(model_path)
 
     scaler_path = MODEL_DIR / "scaler.joblib"
 
     joblib.dump(scaler, scaler_path)
 
-    scaler_meta = mr.tensorflow.create_model(
+    scaler_meta = mr.sklearn.create_model(
         name="aqi_preprocessor",
         description=f"AQI models robust scaler preprocessor."
     )
