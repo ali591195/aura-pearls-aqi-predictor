@@ -24,6 +24,7 @@ from backend.app.routes.current_weather import router as current_weather_router
 from backend.app.routes.raw_historical_backfill import router as raw_historical_backfill_router
 from backend.app.routes.engineered_historical_backfill import router as engineered_historical_backfill_router
 from backend.app.routes.model_training import router as model_training_router
+from backend.app.routes.technical_details import router as technical_details_router
 
 
 load_dotenv()
@@ -53,6 +54,7 @@ app.include_router(current_weather_router)
 app.include_router(raw_historical_backfill_router)
 app.include_router(engineered_historical_backfill_router)
 app.include_router(model_training_router)
+app.include_router(technical_details_router)
 
 
 @app.get("/")

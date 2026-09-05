@@ -135,6 +135,30 @@ function BackfillIcon() {
   );
 }
 
+function TechnicalDetailsIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <rect x="4" y="4" width="16" height="16" rx="3" />
+      <rect x="9" y="9" width="6" height="6" rx="1" />
+      <path d="M9 4V2" />
+      <path d="M15 4V2" />
+      <path d="M9 22v-2" />
+      <path d="M15 22v-2" />
+      <path d="M4 9H2" />
+      <path d="M4 15H2" />
+      <path d="M22 9h-2" />
+      <path d="M22 15h-2" />
+    </svg>
+  );
+}
+
 function Sidebar() {
   return (
     <aside className="sidebar">
@@ -156,30 +180,39 @@ function Sidebar() {
           </span>
         </NavLink>
 
-        <nav className="sidebar-navigation" aria-label="Main navigation">
-            <NavItem
-              label="Prediction"
-              icon={<PredictionIcon />}
-              to="/"
-            />
+        <nav
+          className="sidebar-navigation"
+          aria-label="Main navigation"
+        >
+          <NavItem
+            label="Prediction"
+            icon={<PredictionIcon />}
+            to="/"
+          />
 
-            <NavItem
-              label="Stats"
-              icon={<StatsIcon />}
-              to="/stats"
-            />
+          <NavItem
+            label="Stats"
+            icon={<StatsIcon />}
+            to="/stats"
+          />
 
-            <NavItem
-              label="City"
-              icon={<CityIcon />}
-              disabled
-            />
+          <NavItem
+            label="Technical Details"
+            icon={<TechnicalDetailsIcon />}
+            to="/technical-details"
+          />
 
-            <NavItem
-              label="Backfill"
-              icon={<BackfillIcon />}
-              to="/backfill"
-            />
+          <NavItem
+            label="City"
+            icon={<CityIcon />}
+            disabled
+          />
+
+          <NavItem
+            label="Backfill"
+            icon={<BackfillIcon />}
+            to="/backfill"
+          />
         </nav>
       </div>
     </aside>
