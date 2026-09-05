@@ -9,6 +9,10 @@ from fastapi.middleware.cors import CORSMiddleware
 
 if sys.platform.startswith("linux"):
     libgomp_path = Path(__file__).resolve().parents[2] / "lib/libgomp.so.1"
+
+    print(f"libgomp path: {libgomp_path}")
+    print(f"libgomp exists: {libgomp_path.exists()}")
+
     ctypes.CDLL(
         str(libgomp_path),
         mode=ctypes.RTLD_GLOBAL,
