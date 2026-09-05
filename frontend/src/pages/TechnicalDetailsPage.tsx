@@ -2,6 +2,7 @@ import PageHeader from "../components/common/PageHeader.tsx";
 import DataFreshnessNotice from "../components/prediction/DataFreshnessNotice.tsx";
 import TechnicalDetailsCard from "../components/technical_details/TechnicalDetailsCard.tsx";
 import TechnicalDetailsSection from "../components/technical_details/TechnicalDetailsSection.tsx";
+import TechnicalDetailsLoadingSkeleton from "../components/technical_details/TechnicalDetailsLoadingSkeleton.tsx";
 
 import usePrediction from "../hooks/usePrediction.ts";
 import useTechnicalDetails from "../hooks/useTechnicalDetails.ts";
@@ -21,7 +22,11 @@ function TechnicalDetailsPage() {
         subtitle="Aura AQI Prediction System"
       />
 
-      {prediction && (
+      {loading && (
+        <TechnicalDetailsLoadingSkeleton />
+      )}
+
+      {!loading && prediction && (
         <DataFreshnessNotice
           date={prediction.ts}
         />

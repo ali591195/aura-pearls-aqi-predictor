@@ -32,17 +32,22 @@ export function getBackendApiUrl(
 export async function postApi<T>(
   url: string,
   errorMessage: string,
+  body?: unknown,
 ): Promise<T> {
   const response = await fetch(url, {
     method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
   });
 
   if (!response.ok) {
     let detail = "";
 
     try {
-      const body = await response.json();
-      detail = body?.detail ?? "";
+      const responseBody = await response.json();
+      detail = responseBody?.detail ?? "";
     } catch {
       // Ignore invalid error bodies.
     }

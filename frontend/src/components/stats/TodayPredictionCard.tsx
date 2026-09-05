@@ -5,6 +5,7 @@ import NotificationCard from "./NotificationCard.tsx";
 
 type TodayPredictionCardProps = {
   data: PredictionResponse;
+  toggle_notice?: boolean
 };
 
 function isToday(timestamp: string): boolean {
@@ -28,11 +29,11 @@ function isToday(timestamp: string): boolean {
 }
 
 function TodayPredictionCard({
-  data,
+  data, toggle_notice = true
 }: TodayPredictionCardProps) {
-  if (!isToday(data.ts)) {
-    return <NotificationCard />;
-  }
+  if (toggle_notice)
+    if (!isToday(data.ts))
+      return <NotificationCard />;
 
   return (
     <AQICard
