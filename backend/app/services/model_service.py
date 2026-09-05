@@ -6,7 +6,7 @@ import lightgbm as lgb
 from keras import Sequential
 from keras.src.saving import load_model
 from sklearn.preprocessing import RobustScaler
-from xgboost.sklearn import XGBRegressor
+from xgboost import XGBRegressor
 
 from src.common.constants import MODEL_DIR, CURRENT_PROD_MODELS
 from src.common.hopsworks_client import mr

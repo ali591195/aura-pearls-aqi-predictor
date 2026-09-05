@@ -6,9 +6,10 @@ import Sidebar from "./components/Sidebar";
 
 import PredictionPage from "./pages/PredictionPage";
 import StatsPage from "./pages/StatsPage";
+import BackfillPage from "./pages/BackfillPage.tsx";
+import TechnicalDetailsPage from "./pages/TechnicalDetailsPage.tsx";
 
 import "./App.css";
-import BackfillPage from "./pages/BackfillPage.tsx";
 
 function App() {
   return (
@@ -23,6 +24,10 @@ function App() {
             <Routes>
               <Route path="/" element={<PredictionPage />} />
               <Route path="/stats" element={<StatsPage />} />
+              <Route
+                path="/technical-details"
+                element={<TechnicalDetailsPage />}
+              />
               <Route path="/backfill" element={<BackfillPage />} />
             </Routes>
           </main>

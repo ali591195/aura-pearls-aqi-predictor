@@ -1,9 +1,15 @@
 from datetime import datetime, timedelta, timezone
+import importlib
 
 from backend.app.schemas.backfill import HistoricalBackfillResponse
 from backend.app.utils.backfill import get_backfill_start_date, validate_backfill_date_range
 from src.backfill.engineered_features_backfill import run_engineered_features_backfill
-from src.common.hopsworks_client import engineered_daily_fs
+import src.common.hopsworks_client as hopsworks_client
+
+
+importlib.reload(hopsworks_client)
+
+engineered_daily_fs = hopsworks_client.engineered_daily_fs
 
 
 def backfill_engineered_historical_data() -> (

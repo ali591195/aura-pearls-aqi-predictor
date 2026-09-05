@@ -1,0 +1,144 @@
+.technical-details-section {
+  width: 100%;
+  padding-top: 10px;
+}
+
+.technical-details-header {
+  position: relative;
+  z-index: 2;
+
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 18px 26px;
+
+  background: rgba(255, 244, 227, 0.6);
+
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+
+  border: 1px solid rgba(255, 250, 240, 0.48);
+  border-radius: 8px;
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.72),
+    inset 0 0 18px rgba(255, 255, 255, 0.08),
+    0 10px 28px rgba(15, 23, 42, 0.07);
+
+  cursor: pointer;
+  text-align: left;
+
+  transition:
+    background 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.technical-details-header:hover {
+  background: rgba(255, 244, 227, 0.72);
+}
+
+.technical-details-header-text {
+  min-width: 0;
+}
+
+.technical-details-header h2 {
+  margin: 0;
+
+  color: #0f172a;
+
+  font-family: "Sora", sans-serif;
+  font-size: 19px;
+  font-weight: 650;
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+}
+
+.technical-details-header p {
+  margin: 5px 0 0;
+
+  color: rgba(15, 23, 42, 0.58);
+
+  font-family: "Inter", sans-serif;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.technical-details-chevron {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  width: 24px;
+  height: 24px;
+
+  color: rgba(15, 23, 42, 0.58);
+
+  transition: transform 0.25s ease;
+}
+
+.technical-details-chevron svg {
+  width: 18px;
+  height: 18px;
+}
+
+.technical-details-chevron.is-open {
+  transform: rotate(180deg);
+}
+
+/* Dropdown animation */
+
+.technical-details-content {
+  position: relative;
+  z-index: 1;
+
+  display: grid;
+
+  grid-template-rows: 0fr;
+
+  opacity: 0;
+
+  transform: translateY(-12px) scaleY(0.96);
+  transform-origin: top center;
+
+  transition:
+    grid-template-rows 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.2s ease,
+    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.technical-details-content-inner {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.technical-details-content.is-open {
+  grid-template-rows: 1fr;
+  
+
+  opacity: 1;
+
+  transform: translateY(0) scaleY(1);
+}
+
+@media (max-width: 700px) {
+  .technical-details-section {
+    padding-top: 10px;
+  }
+
+  .technical-details-header {
+    padding: 16px 20px;
+  }
+
+  .technical-details-header h2 {
+    font-size: 17px;
+  }
+
+  .technical-details-content.is-open {
+    margin-top: 12px;
+  }
+}
