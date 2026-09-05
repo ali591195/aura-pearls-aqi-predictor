@@ -1,10 +1,16 @@
 from datetime import datetime, timedelta, timezone
+import importlib
 
 from backend.app.schemas.backfill import HistoricalBackfillResponse
 from backend.app.utils.backfill import get_backfill_start_date, validate_backfill_date_range
 from src.backfill.historical_backfill import generate_backfill_date_ranges, run_historical_backfill
-from src.common.hopsworks_client import raw_hourly_fs
 from src.common.schemas import DateRanges
+import src.common.hopsworks_client as hopsworks_client
+
+
+importlib.reload(hopsworks_client)
+
+raw_hourly_fs = hopsworks_client.raw_hourly_fs
 
 
 def backfill_raw_historical_data() -> HistoricalBackfillResponse:
