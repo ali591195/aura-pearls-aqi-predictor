@@ -1,42 +1,111 @@
+import {
+  useEffect,
+  useState,
+} from "react";
+
 import "./Aurora.css";
 
-function Aurora() {
+const AURORA_HEIGHT = 1000;
+
+function AuroraWave() {
   return (
-    <div className="aurora" aria-hidden="true">
-      <svg
-        className="aurora-svg"
-        viewBox="0 0 1600 1000"
-        preserveAspectRatio="none"
-      >
-        <defs>
-          <filter id="aurora-blur">
-            <feGaussianBlur stdDeviation="27" />
-          </filter>
+    <svg
+      className="aurora-svg"
+      viewBox="0 0 1600 1000"
+      preserveAspectRatio="none"
+    >
+      <defs>
+        <filter id="aurora-blur">
+          <feGaussianBlur stdDeviation="27" />
+        </filter>
 
-          <linearGradient id="green-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#10ea94" stopOpacity="0.5" />
-            <stop offset="100%" stopColor="#34d399" stopOpacity="0.35" />
-          </linearGradient>
+        <linearGradient
+          id="green-gradient"
+          x1="0%"
+          y1="0%"
+          x2="100%"
+          y2="100%"
+        >
+          <stop
+            offset="0%"
+            stopColor="#10ea94"
+            stopOpacity="0.5"
+          />
+          <stop
+            offset="100%"
+            stopColor="#34d399"
+            stopOpacity="0.35"
+          />
+        </linearGradient>
 
-          <linearGradient id="violet-gradient" x1="100%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#8b5cf6" stopOpacity="0.38" />
-            <stop offset="100%" stopColor="#8b5cf6" stopOpacity="0.2" />
-          </linearGradient>
+        <linearGradient
+          id="violet-gradient"
+          x1="100%"
+          y1="0%"
+          x2="0%"
+          y2="100%"
+        >
+          <stop
+            offset="0%"
+            stopColor="#8b5cf6"
+            stopOpacity="0.38"
+          />
+          <stop
+            offset="100%"
+            stopColor="#8b5cf6"
+            stopOpacity="0.2"
+          />
+        </linearGradient>
 
-          <linearGradient id="cyan-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#22d3ee" stopOpacity="0.42" />
-            <stop offset="50%" stopColor="#22d3ee" stopOpacity="0.32" />
-            <stop offset="100%" stopColor="#22d3ee" stopOpacity="0.20" />
-          </linearGradient>
+        <linearGradient
+          id="cyan-gradient"
+          x1="0%"
+          y1="0%"
+          x2="100%"
+          y2="0%"
+        >
+          <stop
+            offset="0%"
+            stopColor="#22d3ee"
+            stopOpacity="0.42"
+          />
+          <stop
+            offset="50%"
+            stopColor="#22d3ee"
+            stopOpacity="0.32"
+          />
+          <stop
+            offset="100%"
+            stopColor="#22d3ee"
+            stopOpacity="0.2"
+          />
+        </linearGradient>
 
-          <linearGradient id="magenta-gradient" x1="0%" y1="100%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#f472b6" stopOpacity="0.2" />
-            <stop offset="100%" stopColor="#f472b6" stopOpacity="0.08" />
-          </linearGradient>
-        </defs>
+        <linearGradient
+          id="magenta-gradient"
+          x1="0%"
+          y1="100%"
+          x2="100%"
+          y2="0%"
+        >
+          <stop
+            offset="0%"
+            stopColor="#f472b6"
+            stopOpacity="0.2"
+          />
+          <stop
+            offset="100%"
+            stopColor="#f472b6"
+            stopOpacity="0.08"
+          />
+        </linearGradient>
+      </defs>
 
-        <g className="aurora-whole">
-          <g className="aurora-waves" filter="url(#aurora-blur)">
+      <g className="aurora-whole">
+        <g
+          className="aurora-waves"
+          filter="url(#aurora-blur)"
+        >
           <path
             className="aurora-wave aurora-wave-green"
             fill="url(#green-gradient)"
@@ -102,8 +171,73 @@ function Aurora() {
                C100 900, -180 1120, -500 970 Z"
           />
         </g>
-        </g>
-      </svg>
+      </g>
+    </svg>
+  );
+}
+
+function Aurora() {
+  const [auroraCount, setAuroraCount] = useState(1);
+
+  useEffect(() => {
+    function updateAuroraCount() {
+      const documentHeight =
+        document.documentElement.scrollHeight;
+
+      const count = Math.max(
+        1,
+        Math.ceil(
+          documentHeight / AURORA_HEIGHT,
+        ),
+      );
+
+      setAuroraCount(count);
+    }
+
+    updateAuroraCount();
+
+    const resizeObserver =
+      new ResizeObserver(updateAuroraCount);
+
+    resizeObserver.observe(
+      document.documentElement,
+    );
+
+    window.addEventListener(
+      "resize",
+      updateAuroraCount,
+    );
+
+    return () => {
+      resizeObserver.disconnect();
+
+      window.removeEventListener(
+        "resize",
+        updateAuroraCount,
+      );
+    };
+  }, []);
+
+  return (
+    <div className="aurora" aria-hidden="true">
+      <div
+        className="aurora-background"
+        style={{
+          height: `${auroraCount * AURORA_HEIGHT}px`,
+        }}
+      >
+        {Array.from(
+          { length: auroraCount },
+          (_, index) => (
+            <div
+              className="aurora-instance"
+              key={index}
+            >
+              <AuroraWave />
+            </div>
+          ),
+        )}
+      </div>
     </div>
   );
 }

@@ -7,24 +7,13 @@
   inset: 0;
 
   overflow: hidden;
+
   pointer-events: none;
 
   z-index: 0;
 
   opacity: 0.9;
-}
 
-.ice-texture-svg {
-  position: absolute;
-  inset: 0;
-
-  width: 100%;
-  height: 100%;
-
-  filter: blur(0.15px);
-}
-
-.ice-texture {
   --ice-primary: #dff7ff;
   --ice-secondary: #22d3ee;
 }
@@ -32,4 +21,39 @@
 .ice-texture-light {
   --ice-primary: #64748b;
   --ice-secondary: #0891b2;
+}
+
+.ice-texture-patterns {
+  position: absolute;
+
+  top: 0;
+  left: 0;
+
+  width: 100%;
+
+  overflow: hidden;
+}
+
+.ice-texture-instance {
+  position: relative;
+
+  width: 100%;
+  height: 1000px;
+
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+
+  overflow: hidden;
+}
+
+.ice-texture-svg {
+  flex-shrink: 0;
+
+  width: 500px;
+  height: 1000px;
+
+  display: block;
+
+  filter: blur(0.15px);
 }
