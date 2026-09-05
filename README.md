@@ -14,7 +14,7 @@ Built as the capstone project for the **10Pearls Shine Internship Program** (Dat
 
 ## Overview
 
-Aura predicts Lahore's Air Quality Index for the next four days using an automated pipeline: hourly data ingestion → a two-tier feature store → per-horizon deep learning models → SHAP-based explainability → a live dashboard. Every architectural choice below was made for a stated reason, not by default — see [Tech Stack & Rationale](#tech-stack--rationale).
+Aura predicts Lahore's Air Quality Index for the next four days using an automated pipeline: hourly data ingestion → a two-tier feature store → per-horizon models (gradient-boosted trees, random forest, and a neural net) → SHAP-based explainability → a live dashboard. Every architectural choice below was made for a stated reason, not by default — see [Tech Stack & Rationale](#tech-stack--rationale).
 
 <!-- Screenshot: docs/images/dashboard.png -->
 ![Aura dashboard — Prediction page](docs/images/dashboard.png)
@@ -38,7 +38,7 @@ flowchart TD
     C --> D[Daily Engineered Features Pipeline<br/>lags, rolling stats, calendar features]
     D --> E[(Hopsworks Feature Store<br/>daily_engineered_features)]
     E --> F[Model Training Pipeline]
-    F --> G[Per-Horizon MLP Models<br/>+ RobustScaler artifact]
+    F --> G[Per-Horizon Models<br/>XGBoost / MLP / LightGBM / RF<br/>+ RobustScaler artifact]
     G --> H[(Hopsworks Model Registry)]
     H --> I[FastAPI Backend]
     I --> J[React + Vite Frontend<br/>Aurora / glassmorphism dashboard]
@@ -57,19 +57,20 @@ This follows the **FTI (Feature / Training / Inference) pipeline pattern**: feat
 
 ## Tech Stack & Rationale
 
-| Layer | Choice | Why                                                                                                                                                                                               |
-|---|---|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Feature store / model registry | **Hopsworks** | Genuine free tier, purpose-built for the FTI pipeline pattern, no billing account required                                                                                                        |
-| Scheduler | **GitHub Actions** | Serverless by nature — Apache Airflow was the alternative, but it needs a persistently hosted server, which conflicts with the project's "100% serverless" requirement                            |
-| Data source | **Open-Meteo** (Air Quality + Forecast APIs) | Free historical hourly data going back to Aug 2022 for Lahore; migrated from AQICN/OpenWeather after discovering neither offered free historical access needed for model training                 |
-| Backend | **FastAPI** | Brief allows Flask or FastAPI — FastAPI chosen for async support, Pydantic request/response validation, and auto-generated OpenAPI docs                                                           |
-| Frontend | **Vite + React + TypeScript** | Brief allows Streamlit/Gradio or a custom UI — React chosen for full design control over the custom aurora/glassmorphism dashboard                                                                |
-| Baseline models | **Scikit-learn** (Random Forest, Ridge Regression) | Required by the brief as a statistical baseline against the deep learning approach                                                                                                                |
-| Deep learning model | **TensorFlow** (Dense NN / MLP) | Required by the brief to compare statistical vs. deep learning approaches; LSTM was scoped as a stretch goal and not pursued (see Limitations)                                                    |
-| Explainability | **SHAP** (`shap.DeepExplainer`) | Required by the brief                                                                                                                                                                             |
-| AQI computation | **Open-Meteo's native `us_aqi` field** | Originally computed locally via US EPA breakpoint methodology; superseded once discovered Open-Meteo provides it natively. Original EPA logic preserved in `src/archived/epa_aqi/` for reference. |
-| Frontend hosting | **Vercel** | Free tier, zero-config Vite/React deploys, monorepo support via root directory config                                                                                                             |
-| Backend hosting | **FastAPI Cloud** | Official hosting platform from the FastAPI maintainers                                                                                                                                            |
+| Layer                          | Choice                                                                                             | Why                                                                                                                                                                                                                           |
+|--------------------------------|----------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Feature store / model registry | **Hopsworks**                                                                                      | Genuine free tier, purpose-built for the FTI pipeline pattern, no billing account required                                                                                                                                    |
+| Scheduler                      | **GitHub Actions**                                                                                 | Serverless by nature — Apache Airflow was the alternative, but it needs a persistently hosted server, which conflicts with the project's "100% serverless" requirement                                                        |
+| Data source                    | **Open-Meteo** (Air Quality + Forecast APIs)                                                       | Free historical hourly data going back to Aug 2022 for Lahore; migrated from AQICN/OpenWeather after discovering neither offered free historical access needed for model training                                             |
+| Backend                        | **FastAPI**                                                                                        | Brief allows Flask or FastAPI — FastAPI chosen for async support, Pydantic request/response validation, and auto-generated OpenAPI docs                                                                                       |
+| Frontend                       | **Vite + React + TypeScript**                                                                      | Brief allows Streamlit/Gradio or a custom UI — React chosen for full design control over the custom aurora/glassmorphism dashboard                                                                                            |
+| Statistical models             | **Scikit-learn** (Random Forest) + **XGBoost** + **LightGBM**                                      | Ridge served as the initial statistical baseline; per-horizon re-evaluation (Sep 2026) found gradient-boosted trees outperformed Ridge/RF on Days 1 and 3, so XGBoost/LightGBM were promoted to production for those horizons |
+| Deep learning model            | **TensorFlow** (Dense NN / MLP)                                                                    | Required by the brief to compare statistical vs. deep learning approaches; LSTM was scoped as a stretch goal and not pursued (see Limitations)                                                                                |
+| Production model selection     | **Per-horizon model type** — XGBoost (Day 1), MLP (Day 2), LightGBM (Day 3), Random Forest (Day 4) | Independent 5-fold `RandomizedSearchCV` per forecast horizon found different model types won on different days; no single model type dominated all four horizons                                                              |
+| Explainability                 | **SHAP** (`TreeExplainer` for XGBoost/LightGBM/RF, `DeepExplainer` for the Day 2 MLP)              | Required by the brief                                                                                                                                                                                                         |
+| AQI computation                | **Open-Meteo's native `us_aqi` field**                                                             | Originally computed locally via US EPA breakpoint methodology; superseded once discovered Open-Meteo provides it natively. Original EPA logic preserved in `src/archived/epa_aqi/` for reference.                             |
+| Frontend hosting               | **Vercel**                                                                                         | Free tier, zero-config Vite/React deploys, monorepo support via root directory config                                                                                                                                         |
+| Backend hosting                | **FastAPI Cloud**                                                                                  | Official hosting platform from the FastAPI maintainers                                                                                                                                                                        |
 
 ---
 
@@ -77,8 +78,8 @@ This follows the **FTI (Feature / Training / Inference) pipeline pattern**: feat
 
 - Two-tier feature store: permanent raw hourly readings + daily engineered features (lags, 3/7-day rolling stats, calendar features)
 - ~4 years of historical Lahore air quality + weather data (Aug 2022 – present, as of the last backfill)
-- Independently feature-selected and hyperparameter-tuned MLP models for each of the 4 forecast horizons
-- SHAP explainability per forecast horizon, surfacing the top drivers behind each prediction
+- Independently feature-selected and hyperparameter-tuned model for each of the 4 forecast horizons — XGBoost (Day 1), MLP (Day 2), LightGBM (Day 3), Random Forest (Day 4)
+- SHAP explainability per forecast horizon, run against each day's selected production model — surfacing the top drivers behind each prediction
 - Hazardous AQI alerting built directly into the dashboard: each forecast card's hue, symbol, and border/symbol color respond dynamically to that day's AQI severity level
 - Aurora-themed, glassmorphism dashboard built as a custom React UI
 - All ingestion and recovery pipelines (hourly, daily, weekly, monthly engineered) manually run and verified end-to-end
@@ -92,30 +93,37 @@ This follows the **FTI (Feature / Training / Inference) pipeline pattern**: feat
 
 **Initial model comparison** (shared 23-feature set, mean R² across all 4 forecast horizons):
 
-| Model | Configuration | Mean R² |
-|---|---|---|
-| Random Forest | 800 trees, depth 20, split/leaf 7, feature/sample subsampling | 0.5616 |
-| Ridge Regression | alpha = 0.01 | 0.5818 |
-| Dense NN (MLP) | 32 units, L2 + dropout | 0.5866 |
+| Model            | Configuration                                                 | Mean R² |
+|------------------|---------------------------------------------------------------|---------|
+| Random Forest    | 800 trees, depth 20, split/leaf 7, feature/sample subsampling | 0.5616  |
+| Ridge Regression | alpha = 0.01                                                  | 0.5818  |
+| Dense NN (MLP)   | 32 units, L2 + dropout                                        | 0.5866  |
 
-Based on this, per-horizon feature selection and tuning was run independently for each forecast day, using the MLP architecture (which had shown the strongest ceiling):
+Based on this, per-horizon feature selection and tuning was run independently for each forecast day — first using the MLP architecture across all four horizons, then re-evaluated per horizon across model types in a follow-up round, settling on the model type that performed best for each specific day:
 
-**Final per-horizon results** (winning MLP configuration, 128 units, L2=1e-3, learning rate 5e-3, Huber loss, Ridge-RFECV-selected features per horizon):
+**Final per-horizon results** (best model type per horizon, selected via independent per-day CV tuning and RFECV feature selection):
 
-| Horizon | RMSE | MAE | R² |
-|---|---|---|---|
-| Day 1 | 12.52 | 9.33 | **0.901** |
-| Day 2 | 25.59 | 18.23 | 0.593 |
-| Day 3 | 28.89 | 21.11 | 0.509 |
-| Day 4 | 29.59 | 21.77 | 0.506 |
+| Horizon | Model | RMSE | MAE | R² |
+|---|---|---|---|---|
+| Day 1 | XGBoost | 15.53 | 11.12 | 0.898 |
+| Day 2 | MLP | 27.97 | 21.23 | 0.659 |
+| Day 3 | LightGBM | 31.02 | 24.17 | 0.561 |
+| Day 4 | Random Forest | 32.77 | 25.46 | 0.498 |
 
 Day 1 forecasts are consistently strong; accuracy drops for Days 2–4, which is expected — longer-horizon air quality forecasting has less signal to work with. See [Limitations](#known-limitations).
 
-Feature selection was run independently per forecast horizon starting from all 49 features, using RFECV (Ridge as the estimator) as a starting point rather than a final answer — selections were manually iterated on and refined beyond RFECV's raw output for each horizon.
+Feature selection was run independently per forecast horizon and per model type, using RFECV as a starting point — Ridge as the estimator for the original per-horizon MLP experimentation, and each model's own algorithm (XGBoost, LightGBM, Random Forest) for the September model-type re-evaluation that determined the current production models. Selections were manually iterated on and refined beyond RFECV's raw output where it would have broken feature-group consistency (e.g. dropping only part of a pollutant's temporal block).
 
 ### Explainability (SHAP)
 
-PM2.5 (today's value and its rolling mean) is the consistent top driver across all four forecast horizons — its exact form shifts from same-day value (Day 1) toward the 7-day rolling mean as the horizon lengthens (Days 2–4), consistent with longer-horizon forecasts leaning more on smoothed trend than the latest single reading.
+SHAP explainability is run per forecast horizon against that horizon's production model, using `shap.TreeExplainer` for the tree-based models (XGBoost, LightGBM, Random Forest) and `shap.DeepExplainer` for the Day 2 MLP.
+
+- **Day 1 (XGBoost):** `pm25_today` is the dominant driver by a wide margin, followed by `pm10_today` and `pm25_roll_mean_3`; `no2_today`, `aqi_today`, and `wind_spd_today` form a secondary tier.
+- **Day 2 (MLP):** `co_today` dominates by a large margin, with `pm25_today`, `pm25_roll_mean_7`, `pm25_roll_mean_3`, and `pm10_roll_mean_7` forming a distant secondary tier.
+- **Day 3 (LightGBM):** `pm25_lag_1` is the top driver, followed closely by `aqi_change_rate` and `pm25_roll_std_7`; `humidity_lag_1` and `dew_pt_today` are secondary.
+- **Day 4 (Random Forest):** `pm25_lag_1` again leads, followed by `aqi_change_rate`, `o3_roll_mean_7`, `humidity_lag_1`, and `pm25_roll_std_7`.
+
+PM2.5-derived features (same-day value, lag, or rolling stats) are the consistent top driver across all four horizons, though the exact form and which secondary pollutant/weather features matter shifts by model type and horizon.
 
 <!-- SHAP feature importance plot: docs/images/day_1_shap_bee_plot.png -->
 ![SHAP feature importance — Day 1](docs/images/day_1_shap_bee_plot.png)
@@ -167,7 +175,7 @@ aura-pearls-aqi-predictor/
 ├── src/
 │   ├── feature_pipeline/         # hourly ingestion
 │   ├── engineered_features/      # daily feature engineering
-│   ├── model_training/           # training pipeline, MLP build logic
+│   ├── model_training/           # training pipeline, per-horizon model build logic (XGBoost/MLP/LightGBM/RF)
 │   └── ...                       # modeling + common + backfill + archived
 ├── notebooks/                  
 │   ├── eda/                      # EDA, feature experiments, model experimentation, SHAP
@@ -253,7 +261,7 @@ By default, this serves on `http://localhost:5173` (Vite's default dev port).
 ## Known Limitations
 
 - **Single city only.** The model and feature store currently support Lahore exclusively. A city-selection feature is scoped but not built — see Roadmap.
-- **Forecast accuracy declines with horizon length.** Day 1 R² is 0.901; Days 2–4 range 0.51–0.59. This is a genuine result of the underlying forecasting difficulty, not a bug — reported honestly rather than tuned away.
+- **Forecast accuracy declines with horizon length.** Day 1 R² is 0.898; Days 2–4 range 0.498–0.659. This is a genuine result of the underlying forecasting difficulty, not a bug — reported honestly rather than tuned away.
 
 ---
 
