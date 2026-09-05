@@ -2,7 +2,6 @@ import {
   useEffect,
   useState,
 } from "react";
-
 import "./Aurora.css";
 
 const AURORA_HEIGHT = 1000;
@@ -15,10 +14,15 @@ function AuroraWave() {
       preserveAspectRatio="none"
     >
       <defs>
-        <filter id="aurora-blur">
+        <filter
+          id="aurora-blur"
+          x="-50%"
+          y="-50%"
+          width="200%"
+          height="200%"
+        >
           <feGaussianBlur stdDeviation="27" />
         </filter>
-
         <linearGradient
           id="green-gradient"
           x1="0%"
@@ -37,7 +41,6 @@ function AuroraWave() {
             stopOpacity="0.35"
           />
         </linearGradient>
-
         <linearGradient
           id="violet-gradient"
           x1="100%"
@@ -56,7 +59,6 @@ function AuroraWave() {
             stopOpacity="0.2"
           />
         </linearGradient>
-
         <linearGradient
           id="cyan-gradient"
           x1="0%"
@@ -80,7 +82,6 @@ function AuroraWave() {
             stopOpacity="0.2"
           />
         </linearGradient>
-
         <linearGradient
           id="magenta-gradient"
           x1="0%"
@@ -100,7 +101,6 @@ function AuroraWave() {
           />
         </linearGradient>
       </defs>
-
       <g className="aurora-whole">
         <g
           className="aurora-waves"
@@ -118,7 +118,6 @@ function AuroraWave() {
                C950 290, 720 550, 430 400
                C130 250, -170 470, -500 330 Z"
           />
-
           <path
             className="aurora-wave aurora-wave-emerald"
             fill="url(#green-gradient)"
@@ -131,7 +130,6 @@ function AuroraWave() {
                C940 440, 720 700, 420 560
                C100 400, -180 620, -500 470 Z"
           />
-
           <path
             className="aurora-wave aurora-wave-cyan"
             fill="url(#cyan-gradient)"
@@ -144,7 +142,6 @@ function AuroraWave() {
                C930 630, 700 880, 410 740
                C100 600, -180 800, -500 690 Z"
           />
-
           <path
             className="aurora-wave aurora-wave-violet"
             fill="url(#violet-gradient)"
@@ -157,7 +154,6 @@ function AuroraWave() {
                C930 810, 700 1050, 410 920
                C100 780, -180 1000, -500 840 Z"
           />
-
           <path
             className="aurora-wave aurora-wave-magenta"
             fill="url(#magenta-gradient)"
@@ -183,34 +179,24 @@ function Aurora() {
     function updateAuroraCount() {
       const documentHeight =
         document.documentElement.scrollHeight;
-
       const count = Math.max(
         1,
-        Math.ceil(
-          documentHeight / AURORA_HEIGHT,
-        ),
+        Math.ceil(documentHeight / AURORA_HEIGHT),
       );
-
       setAuroraCount(count);
     }
-
     updateAuroraCount();
-
     const resizeObserver =
       new ResizeObserver(updateAuroraCount);
-
     resizeObserver.observe(
       document.documentElement,
     );
-
     window.addEventListener(
       "resize",
       updateAuroraCount,
     );
-
     return () => {
       resizeObserver.disconnect();
-
       window.removeEventListener(
         "resize",
         updateAuroraCount,
@@ -230,7 +216,11 @@ function Aurora() {
           { length: auroraCount },
           (_, index) => (
             <div
-              className="aurora-instance"
+              className={`aurora-instance${
+                index % 2 === 1
+                  ? " aurora-instance-flipped"
+                  : ""
+              }`}
               key={index}
             >
               <AuroraWave />

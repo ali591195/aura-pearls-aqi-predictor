@@ -1,46 +1,39 @@
 .aurora {
   position: absolute;
   inset: 0;
-
   overflow: hidden;
-
   pointer-events: none;
-
   z-index: 0;
-
   background: #0a0e1a;
 }
 
 .aurora-background {
   position: absolute;
-
   top: 0;
   left: 0;
-
   width: 100%;
-
   overflow: hidden;
 }
 
 .aurora-instance {
   position: relative;
-
   width: 100%;
   height: 1000px;
-
   overflow: hidden;
+}
+
+.aurora-instance-flipped .aurora-svg {
+  transform: scaleY(-1);
 }
 
 .aurora-svg {
   position: absolute;
-
   top: -10%;
   left: -10%;
-
   width: 120%;
   height: 120%;
-
   overflow: visible;
+  transform-origin: center;
 }
 
 .aurora-waves {
@@ -51,16 +44,13 @@
 .aurora-wave {
   transform-box: fill-box;
   transform-origin: center;
-
   mix-blend-mode: screen;
-
   will-change: transform, opacity;
 }
 
 .aurora-whole {
   transform-box: fill-box;
   transform-origin: center;
-
   animation:
     aurora-whole-breathe
     15s
@@ -69,57 +59,47 @@
 }
 
 /* Large-scale flowing movement */
-
 .aurora-wave-green {
   animation:
     green-drift 24s ease-in-out infinite,
     green-breathe 13s ease-in-out infinite,
     green-flicker 4s ease-in-out infinite;
-
   animation-delay:
     -8s,
     -2s;
 }
-
 .aurora-wave-emerald {
   animation:
     emerald-drift 27s ease-in-out infinite,
     emerald-breathe 15s ease-in-out infinite,
     emerald-flicker 4.8s ease-in-out infinite;
-
   animation-delay:
     -17s,
     -4s;
 }
-
 .aurora-wave-violet {
   animation:
     violet-drift 26s ease-in-out infinite,
     violet-breathe 16s ease-in-out infinite,
     violet-flicker 4s ease-in-out infinite;
-
   animation-delay:
     -15s,
     -1s;
 }
-
 .aurora-wave-cyan {
   animation:
     cyan-drift 21s ease-in-out infinite,
     cyan-breathe 14s ease-in-out infinite,
     cyan-flicker 4.5s ease-in-out infinite;
-
   animation-delay:
     -22s,
     -3s;
 }
-
 .aurora-wave-magenta {
   animation:
     magenta-drift 29s ease-in-out infinite,
     magenta-breathe 17s ease-in-out infinite,
     magenta-flicker 5.5s ease-in-out infinite;
-
   animation-delay:
     0s,
     -5s;
@@ -130,14 +110,12 @@
   100% {
     transform: translateY(0);
   }
-
   50% {
     transform: translateY(-2%);
   }
 }
 
 /* Green */
-
 @keyframes green-drift {
   0% {
     transform:
@@ -145,28 +123,24 @@
       rotate(-1deg)
       scale(1);
   }
-
   25% {
     transform:
       translate(4%, -1%)
       rotate(1deg)
       scale(1.02);
   }
-
   50% {
     transform:
       translate(-3%, 2%)
       rotate(-1deg)
       scale(1.01);
   }
-
   75% {
     transform:
       translate(5%, 0%)
       rotate(1deg)
       scale(1.03);
   }
-
   100% {
     transform:
       translate(0, 0)
@@ -174,36 +148,30 @@
       scale(1);
   }
 }
-
 @keyframes green-flicker {
   0%,
   100% {
     opacity: 0.95;
   }
-
   50% {
     opacity: 1.03;
   }
 }
-
 @keyframes green-breathe {
   0%,
   70%,
   100% {
     margin-top: 0;
   }
-
   82% {
     margin-top: -4%;
   }
-
   92% {
     margin-top: 2%;
   }
 }
 
 /* Emerald */
-
 @keyframes emerald-drift {
   0% {
     transform:
@@ -211,28 +179,24 @@
       rotate(1deg)
       scale(1);
   }
-
   25% {
     transform:
       translate(-4%, 1%)
       rotate(-1deg)
       scale(1.02);
   }
-
   50% {
     transform:
       translate(3%, -1%)
       rotate(1deg)
       scale(1.01);
   }
-
   75% {
     transform:
       translate(-5%, 2%)
       rotate(-1deg)
       scale(1.03);
   }
-
   100% {
     transform:
       translate(0, 0)
@@ -240,36 +204,30 @@
       scale(1);
   }
 }
-
 @keyframes emerald-flicker {
   0%,
   100% {
     opacity: 0.9;
   }
-
   50% {
     opacity: 1.02;
   }
 }
-
 @keyframes emerald-breathe {
   0%,
   72%,
   100% {
     margin-top: 0;
   }
-
   84% {
     margin-top: 3%;
   }
-
   94% {
     margin-top: -2%;
   }
 }
 
 /* Violet */
-
 @keyframes violet-drift {
   0% {
     transform:
@@ -277,28 +235,24 @@
       rotate(1deg)
       scale(1);
   }
-
   25% {
     transform:
       translate(-3%, -1%)
       rotate(-1deg)
       scale(1.02);
   }
-
   50% {
     transform:
       translate(4%, 2%)
       rotate(1deg)
       scale(1.03);
   }
-
   75% {
     transform:
       translate(-4%, 0%)
       rotate(-1deg)
       scale(1);
   }
-
   100% {
     transform:
       translate(0, 0)
@@ -306,36 +260,30 @@
       scale(1);
   }
 }
-
 @keyframes violet-flicker {
   0%,
   100% {
     opacity: 0.92;
   }
-
   50% {
     opacity: 1.04;
   }
 }
-
 @keyframes violet-breathe {
   0%,
   75%,
   100% {
     margin-top: 0;
   }
-
   86% {
     margin-top: 4%;
   }
-
   95% {
     margin-top: -2%;
   }
 }
 
 /* Cyan */
-
 @keyframes cyan-drift {
   0% {
     transform:
@@ -343,28 +291,24 @@
       rotate(-1deg)
       scale(1);
   }
-
   25% {
     transform:
       translate(5%, 2%)
       rotate(1deg)
       scale(1.03);
   }
-
   50% {
     transform:
       translate(-4%, -2%)
       rotate(-1deg)
       scale(1);
   }
-
   75% {
     transform:
       translate(3%, 1%)
       rotate(1deg)
       scale(1.02);
   }
-
   100% {
     transform:
       translate(0, 0)
@@ -372,36 +316,30 @@
       scale(1);
   }
 }
-
 @keyframes cyan-flicker {
   0%,
   100% {
     opacity: 0.95;
   }
-
   50% {
     opacity: 1;
   }
 }
-
 @keyframes cyan-breathe {
   0%,
   68%,
   100% {
     margin-top: 0;
   }
-
   80% {
     margin-top: -5%;
   }
-
   91% {
     margin-top: 3%;
   }
 }
 
 /* Magenta */
-
 @keyframes magenta-drift {
   0% {
     transform:
@@ -409,28 +347,24 @@
       rotate(-1deg)
       scale(1);
   }
-
   25% {
     transform:
       translate(4%, 1%)
       rotate(1deg)
       scale(1.02);
   }
-
   50% {
     transform:
       translate(-3%, -2%)
       rotate(-1deg)
       scale(1.03);
   }
-
   75% {
     transform:
       translate(5%, 1%)
       rotate(1deg)
       scale(1.01);
   }
-
   100% {
     transform:
       translate(0, 0)
@@ -438,29 +372,24 @@
       scale(1);
   }
 }
-
 @keyframes magenta-flicker {
   0%,
   100% {
     opacity: 0.88;
   }
-
   50% {
     opacity: 1.04;
   }
 }
-
 @keyframes magenta-breathe {
   0%,
   70%,
   100% {
     margin-top: 0;
   }
-
   84% {
     margin-top: -4%;
   }
-
   93% {
     margin-top: 2%;
   }
