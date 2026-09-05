@@ -2,8 +2,7 @@ import joblib
 import shutil
 from pathlib import Path
 
-import sklearn
-import lightgbm.sklearn as lgb
+import lightgbm as lgb
 from keras import Sequential
 from keras.src.saving import load_model
 from sklearn.preprocessing import RobustScaler

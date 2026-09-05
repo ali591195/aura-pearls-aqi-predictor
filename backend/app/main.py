@@ -1,8 +1,18 @@
 import os
+import sys
+import ctypes
+from pathlib import Path
 
 from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+
+if sys.platform.startswith("linux"):
+    libgomp_path = Path(__file__).resolve().parents[2] / "lib/libgomp.so.1"
+    ctypes.CDLL(
+        str(libgomp_path),
+        mode=ctypes.RTLD_GLOBAL,
+    )
 
 from backend.app.routes.prediction import router as prediction_router
 from backend.app.routes.current_air_quality import router as current_air_quality_router
