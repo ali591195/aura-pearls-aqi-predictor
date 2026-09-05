@@ -275,6 +275,83 @@ SELECTED_FEATURES_LIST = [
     SELECTED_FEATURES_TARGET_4
 ]
 
+LATEST_SELECTED_FEATURES_TARGET_1 = [
+    'aqi_today',
+    'pm25_today',
+    'pm10_today',
+    'o3_today',
+    'no2_today',
+    'temp_today',
+    'wind_spd_today',
+    'dew_pt_today',
+    'pm25_lag_1',
+    'pm25_lag_2',
+    'pm10_lag_3',
+    'temp_lag_1',
+    'pressure_lag_1',
+    'humidity_lag_1',
+    'pm25_roll_mean_3',
+    'o3_roll_mean_3',
+    'pm25_roll_std_3',
+    'o3_roll_std_3'
+]
+LATEST_SELECTED_FEATURES_TARGET_2 = [
+    'pm25_today',
+    'pm10_today',
+    'o3_today',
+    'co_today',
+    'no2_today',
+    'so2_today',
+    'temp_today',
+    'pressure_today',
+    'humidity_today',
+    'wind_spd_today',
+    'dew_pt_today',
+    'pm10_lag_1',
+    'o3_lag_1',
+    'pm25_lag_2',
+    'pm10_lag_2',
+    'o3_lag_2',
+    'pm25_lag_3',
+    'pm10_lag_3',
+    'o3_lag_3',
+    'temp_lag_1',
+    'pressure_lag_1',
+    'humidity_lag_1',
+    'wind_spd_lag_1',
+    'dew_pt_lag_1',
+    'pm25_roll_mean_3',
+    'pm25_roll_mean_7',
+    'pm10_roll_mean_3',
+    'pm10_roll_mean_7',
+    'o3_roll_mean_3',
+    'o3_roll_mean_7',
+    'pm25_roll_std_3',
+    'pm25_roll_std_7',
+    'pm10_roll_std_3',
+    'pm10_roll_std_7',
+    'o3_roll_std_3',
+    'o3_roll_std_7',
+    'day_of_week',
+    'month'
+]
+LATEST_SELECTED_FEATURES_TARGET_3 = ALL_TRAINING_FEATURES
+LATEST_SELECTED_FEATURES_TARGET_4 = ALL_TRAINING_FEATURES
+
+LATEST_SELECTED_FEATURES_LIST = [
+    LATEST_SELECTED_FEATURES_TARGET_1,
+    LATEST_SELECTED_FEATURES_TARGET_2,
+    LATEST_SELECTED_FEATURES_TARGET_3,
+    LATEST_SELECTED_FEATURES_TARGET_4
+]
+
+CURRENT_PROD_MODELS = [
+    ("aqi_xgboost_day_1", "XGBoost"),
+    ("aqi_mlp_day_2", "MLP"),
+    ("aqi_lightgbm_day_3", "LightGBM"),
+    ("aqi_rf_day_4", "Random Forest"),
+]
+
 # Backfill start
 HISTORICAL_BACKFILL_START_DATE = "2022-08-05"
 HISTORICAL_BACKFILL_END_DATE = "2026-08-08"
