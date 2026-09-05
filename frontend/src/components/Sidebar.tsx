@@ -205,7 +205,7 @@ function Sidebar() {
           <NavItem
             label="City"
             icon={<CityIcon />}
-            disabled
+            to="/city"
           />
 
           <NavItem
