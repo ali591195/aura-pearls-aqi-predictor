@@ -2,11 +2,12 @@ import joblib
 import shutil
 from pathlib import Path
 
-import lightgbm as lgb
+import sklearn
+import lightgbm.sklearn as lgb
 from keras import Sequential
 from keras.src.saving import load_model
 from sklearn.preprocessing import RobustScaler
-from xgboost import XGBRegressor
+from xgboost.sklearn import XGBRegressor
 
 from src.common.constants import MODEL_DIR, CURRENT_PROD_MODELS
 from src.common.hopsworks_client import mr
