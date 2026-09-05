@@ -8,6 +8,7 @@ import PredictionPage from "./pages/PredictionPage";
 import StatsPage from "./pages/StatsPage";
 import BackfillPage from "./pages/BackfillPage.tsx";
 import TechnicalDetailsPage from "./pages/TechnicalDetailsPage.tsx";
+import CityPage from "./pages/CityPage.tsx";
 
 import "./App.css";
 
@@ -22,13 +23,30 @@ function App() {
 
           <main className="main-content">
             <Routes>
-              <Route path="/" element={<PredictionPage />} />
-              <Route path="/stats" element={<StatsPage />} />
+              <Route
+                path="/"
+                element={<PredictionPage />}
+              />
+
+              <Route
+                path="/stats"
+                element={<StatsPage />}
+              />
+
               <Route
                 path="/technical-details"
                 element={<TechnicalDetailsPage />}
               />
-              <Route path="/backfill" element={<BackfillPage />} />
+
+              <Route
+                path="/city"
+                element={<CityPage />}
+              />
+
+              <Route
+                path="/backfill"
+                element={<BackfillPage />}
+              />
             </Routes>
           </main>
         </div>

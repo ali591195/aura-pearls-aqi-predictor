@@ -6,6 +6,9 @@ OPENMETEO_AIRQUALITY_URL: str = "https://air-quality-api.open-meteo.com/v1/air-q
 OPENMETEO_WEATHER_URL: str = "https://api.open-meteo.com/v1/forecast"
 OPENMETEO_WEATHER_HISTORICAL_URL: str = "https://archive-api.open-meteo.com/v1/archive"
 
+AIR_QUALITY_PARAMS = ["pm10", "pm2_5", "carbon_monoxide", "nitrogen_dioxide", "sulphur_dioxide", "ozone", "us_aqi"]
+WEATHER_PARAMS = ["temperature_2m", "dew_point_2m", "relative_humidity_2m", "surface_pressure", "wind_speed_10m"]
+
 # Timeout for requests
 TIMEOUT: float = 10
 

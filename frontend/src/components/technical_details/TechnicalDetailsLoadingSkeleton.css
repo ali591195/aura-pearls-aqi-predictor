@@ -1,0 +1,183 @@
+.technical-details-loading-skeleton {
+  width: 100%;
+
+  margin-top: 10px;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 18px;
+}
+
+/* -------------------------------------------------- */
+/* Shared surfaces                                    */
+/* -------------------------------------------------- */
+
+.technical-details-skeleton-freshness,
+.technical-details-skeleton-section-card {
+  position: relative;
+
+  overflow: hidden;
+
+  background: rgba(255, 244, 227, 0.46);
+
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+
+  border: 1px solid rgba(255, 250, 240, 0.42);
+  border-radius: 8px;
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.62),
+    0 8px 24px rgba(15, 23, 42, 0.045);
+}
+
+.technical-details-skeleton-freshness::after,
+.technical-details-skeleton-section-card::after {
+  content: "";
+
+  position: absolute;
+
+  inset: 0;
+
+  transform: translateX(-100%);
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.24) 45%,
+      rgba(255, 255, 255, 0.42) 50%,
+      rgba(255, 255, 255, 0.24) 55%,
+      transparent 100%
+    );
+
+  animation:
+    technical-details-skeleton-shimmer
+    1.8s ease-in-out infinite;
+}
+
+/* -------------------------------------------------- */
+/* Freshness notice                                   */
+/* -------------------------------------------------- */
+
+.technical-details-skeleton-freshness {
+  min-height: 82px;
+
+  padding: 18px 26px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 24px;
+}
+
+.technical-details-skeleton-lines {
+  min-width: 0;
+
+  flex: 1;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 8px;
+}
+
+.technical-details-skeleton-line {
+  display: block;
+
+  background: rgba(15, 23, 42, 0.08);
+
+  border-radius: 6px;
+}
+
+.technical-details-skeleton-line-title {
+  width: 180px;
+  height: 16px;
+}
+
+.technical-details-skeleton-line-text {
+  width: min(420px, 70%);
+  height: 11px;
+}
+
+.technical-details-skeleton-button {
+  width: 92px;
+  height: 38px;
+
+  flex-shrink: 0;
+
+  display: block;
+
+  background: rgba(15, 23, 42, 0.08);
+
+  border-radius: 8px;
+}
+
+/* -------------------------------------------------- */
+/* Technical detail sections                         */
+/* -------------------------------------------------- */
+
+.technical-details-skeleton-sections {
+  display: flex;
+  flex-direction: column;
+
+  gap: 18px;
+}
+
+.technical-details-skeleton-section {
+  display: flex;
+  flex-direction: column;
+
+  gap: 10px;
+}
+
+.technical-details-skeleton-section-title {
+  width: 170px;
+  height: 18px;
+
+  display: block;
+
+  background: rgba(15, 23, 42, 0.08);
+
+  border-radius: 6px;
+}
+
+.technical-details-skeleton-section-card {
+  width: 100%;
+
+  min-height: 210px;
+
+  display: block;
+}
+
+/* -------------------------------------------------- */
+/* Animation                                          */
+/* -------------------------------------------------- */
+
+@keyframes technical-details-skeleton-shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* -------------------------------------------------- */
+/* Responsive                                         */
+/* -------------------------------------------------- */
+
+@media (max-width: 700px) {
+  .technical-details-skeleton-freshness {
+    align-items: flex-start;
+
+    flex-direction: column;
+  }
+
+  .technical-details-skeleton-button {
+    width: 130px;
+  }
+
+  .technical-details-skeleton-section-card {
+    min-height: 260px;
+  }
+}

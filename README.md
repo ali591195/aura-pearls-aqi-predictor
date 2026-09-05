@@ -90,6 +90,7 @@ This follows the **FTI (Feature / Training / Inference) pipeline pattern**: feat
 - On-demand data recovery: a Backfill page detects whether the feature stores are behind and lets the user trigger a raw + engineered backfill and model retrain directly from the dashboard, with live progress and state feedback
 - Stale-data awareness: Prediction and Stats pages detect out-of-date predictions and surface a notification card with a direct link to Backfill.
 - Technical Details page: a per-day toggle showing that forecast horizon's production model type, model version, target, evaluation metrics, and a local (per-prediction) SHAP explanation.
+- City lookup: search any city to get a 4-day AQI prediction for it (geocoded, fetched, and engineered on the fly), with a notice that accuracy may be lower since all production models were trained exclusively on Lahore data.
 
 ---
 
@@ -164,7 +165,7 @@ aura-pearls-aqi-predictor/
 │   │   │   ├── PredictionPage.tsx
 │   │   │   ├── BackfillPage.tsx
 │   │   │   └── StatsPage.tsx
-│   │   │   └── ...               # Technical Detail page
+│   │   │   └── ...               # Technical details and city page
 │   │   ├── components/
 │   │   │   ├── Aurora.tsx        # aurora background (wave-based)
 │   │   │   ├── Sidebar.tsx       # + IceTexture (cracked-ice, refraction)
@@ -266,14 +267,13 @@ By default, this serves on `http://localhost:5173` (Vite's default dev port).
 
 ## Known Limitations
 
-- **Single city only.** The model and feature store currently support Lahore exclusively. A city-selection feature is scoped but not built — see Roadmap.
+- **Non-Lahore predictions use out-of-distribution models.** The City page supports arbitrary cities via on-demand geocoding and feature engineering, but the underlying models were trained exclusively on Lahore data — predictions for other cities may be less accurate, which is surfaced to the user as an explicit notice on that page.
 - **Forecast accuracy declines with horizon length.** Day 1 R² is 0.898; Days 2–4 range 0.498–0.659. This is a genuine result of the underlying forecasting difficulty, not a bug — reported honestly rather than tuned away.
 
 ---
 
 ## Roadmap
 
-- City-selection page (sidebar entry exists, locked) — pending a feasibility check on whether 7 days of prior history can be backfilled on-demand for an arbitrary new city
 - LSTM model as a deep learning stretch goal (scoped in the original plan, not pursued due to limited data volume relative to tuning cost)
 
 ---
