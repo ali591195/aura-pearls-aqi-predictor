@@ -90,8 +90,6 @@ def fetch_current_air_quality() -> CurrentAirQualityResponse:
             "No AQI readings are available for today's mean."
         )
 
-    print(current_aqi_values)
-
     today_aqi_mean = sum(current_aqi_values) / len(
         current_aqi_values
     )

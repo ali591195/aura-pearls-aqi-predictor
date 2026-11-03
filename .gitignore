@@ -42,3 +42,11 @@ lerna-debug.log*
 *.njsproj
 *.sln
 *.sw?
+
+# Claude (local-only)
+.claude/
+CLAUDE.md
+rules.md
+
+# Local data snapshots
+notebooks/eda/data/*.parquet

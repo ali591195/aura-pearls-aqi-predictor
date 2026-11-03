@@ -274,7 +274,14 @@ def run_engineered_features_pipeline(mode: FeatureEngineeringMode, backfill_star
         :return: None
     """
     # Get raw data
-    df, date_range = get_complete_raw_data(mode, backfill_start_date, backfill_end_date)
+    raw_data = get_complete_raw_data(mode, backfill_start_date, backfill_end_date)
+
+    if raw_data is None:
+        raise RuntimeError(
+            "Not enough raw hourly data for engineering. Run raw historical backfill first, then try again."
+        )
+
+    df, date_range = raw_data
 
     # Get date ranges
     start_date, end_date = date_range

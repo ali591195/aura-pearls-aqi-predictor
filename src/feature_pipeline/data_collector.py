@@ -31,7 +31,12 @@ def collect_features(weather_api: str, mode: CollectionMode, date_range: DateRan
 
     if openmeteo_airquality_response is not None and openmeteo_weather_response is not None:
         # Get hourlies data from response
-        airquality_hourly_data, weather_hourly_data = extract_hourly_data(openmeteo_airquality_response, openmeteo_weather_response)
+        hourly_data = extract_hourly_data(openmeteo_airquality_response, openmeteo_weather_response)
+
+        if hourly_data is None:
+            return None
+
+        airquality_hourly_data, weather_hourly_data = hourly_data
 
         if airquality_hourly_data is not None and weather_hourly_data is not None:
 

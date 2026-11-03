@@ -1,5 +1,9 @@
 import { Link } from "react-router-dom";
 import "./DataFreshnessNotice.css";
+import {
+  getPredictionTargetDate,
+  isPredictionFresh,
+} from "../../utils/freshness.ts";
 
 type DataFreshnessNoticeProps = {
   date: string | Date;
@@ -8,28 +12,11 @@ type DataFreshnessNoticeProps = {
 function DataFreshnessNotice({
   date,
 }: DataFreshnessNoticeProps) {
-  const predictionDate = new Date(date);
+  const latestPredictionDate = getPredictionTargetDate(date);
 
-  if (Number.isNaN(predictionDate.getTime())) {
+  if (latestPredictionDate === null || isPredictionFresh(date)) {
     return null;
   }
-
-  const yesterday = new Date();
-  yesterday.setHours(0, 0, 0, 0);
-  yesterday.setDate(yesterday.getDate() - 1);
-
-  predictionDate.setHours(0, 0, 0, 0);
-
-  const isOld = predictionDate < yesterday;
-
-  if (!isOld) {
-    return null;
-  }
-
-  const latestPredictionDate = new Date(predictionDate);
-  latestPredictionDate.setDate(
-    latestPredictionDate.getDate() + 1,
-  );
 
   return (
     <section className="data-freshness-notice">

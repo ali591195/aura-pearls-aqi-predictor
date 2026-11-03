@@ -141,64 +141,54 @@ PM2.5-derived features (same-day value, lag, or rolling stats) are the consisten
 aura-pearls-aqi-predictor/
 ├── backend/
 │   └── app/
-│       ├── main.py
-│       ├── services/
-│       │   ├── feature_service.py
-│       │   ├── model_service.py
+│       ├── routes/               # FastAPI routers
+│       │   ├── prediction.py
+│       │   ├── current_air_quality.py
+│       │   ├── city.py
+│       │   └── ...               # + current_weather, technical_details, model_training, raw/engineered backfill routes
+│       ├── services/             # business logic behind each route
 │       │   ├── prediction_service.py
-│       │   └── ...
-│       ├── routes/
-│       │   ├── prediction.py
-│       │   ├── current_air_quality.py
-│       │   ├── current_weather.py
-│       │   └── ...
-│       ├── schemas/
-│       │   ├── prediction.py
-│       │   ├── current_air_quality.py
-│       │   ├── current_weather.py
-│       │   └── ...
-│       └── ...                   # utils etc
+│       │   ├── model_service.py
+│       │   ├── feature_service.py
+│       │   └── ...               # + city, current_air_quality, current_weather, technical_details, model_training, backfill services
+│       ├── schemas/              # Pydantic models (one per route)
+│       ├── main.py               # FastAPI app entrypoint
+│       └── ...                   # + utils/ (backfill + route helpers)
 ├── frontend/
 │   ├── src/
-│   │   ├── App.tsx
 │   │   ├── pages/
 │   │   │   ├── PredictionPage.tsx
-│   │   │   ├── BackfillPage.tsx
-│   │   │   └── StatsPage.tsx
-│   │   │   └── ...               # Technical details and city page
+│   │   │   ├── StatsPage.tsx
+│   │   │   ├── CityPage.tsx
+│   │   │   └── ...               # + TechnicalDetailsPage, BackfillPage
 │   │   ├── components/
+│   │   │   ├── common/           # reusable components (AQICard, PageHeader, SectionHeader)
+│   │   │   ├── prediction/       # components are grouped by page
+│   │   │   ├── stats/
 │   │   │   ├── Aurora.tsx        # aurora background (wave-based)
-│   │   │   ├── Sidebar.tsx       # + IceTexture (cracked-ice, refraction)
-│   │   │   ├── common/           # contain reusable components
-│   │   │   ├── prediction/       # components related to prediction page
-│   │   │   └── ...               # footer, backfill, stats directory etc
-│   │   ├── assets/
-│   │   ├── hooks/                # useCurrentAirQuality, useCurrentWeather, usePrediction, etc
-│   │   └── ...                   # other files + utils directory
+│   │   │   ├── Sidebar.tsx
+│   │   │   ├── IceTexture.tsx    # cracked-ice, refraction effect
+│   │   │   └── ...               # + backfill/, city/, technical_details/ folders, Footer
+│   │   ├── hooks/                # useCurrentAirQuality, useCurrentWeather, usePrediction, useCity, etc
+│   │   ├── App.tsx
+│   │   ├── main.tsx
+│   │   └── ...                   # + utils/ (api, aqi, cache, date), App.css, index.css
 │   ├── public/
 │   │   └── logo.png
-│   └── ...
+│   ├── package.json
+│   ├── vite.config.ts
+│   ├── vercel.json               # Vercel deployment config
+│   └── ...                       # + index.html, tsconfig files, package-lock.json, README.md
 ├── src/
 │   ├── feature_pipeline/         # hourly ingestion
 │   ├── engineered_features/      # daily feature engineering
 │   ├── model_training/           # training pipeline, per-horizon model build logic (XGBoost/MLP/LightGBM/RF)
-│   └── ...                       # modeling + common + backfill + archived
-├── notebooks/                  
-│   ├── eda/                      # EDA, feature experiments, model experimentation, SHAP
-│   └── model_experimentation/    # model experimentation, SHAP
-├── .github/
-│   ├── workflows/                # 7 pipelines
-│   └── actions/                  # setup-python-env, run-pipeline composite actions
-├── scripts/                                          
-├── lib/                          # vendored libgomp.so.1 (FastAPI Cloud native dependency workaround)
-├── docs/images/                  # README visuals
+│   └── ...                       # + modeling, common, backfill, archived
+├── ...                           # + notebooks/ (eda/, model_experimentation/), scripts/, .github/ (actions/, workflows/), lib/ (vendored libgomp.so.1), docs/
+├── run_backend.py                # starts the FastAPI backend locally
 ├── requirements.txt
 ├── pyproject.toml                # uv-based dependency set, used only for FastAPI Cloud deployment
-├── uv.lock
-├── .env.example
-├── LICENSE (MIT)
-├── README.md
-└── ...
+└── ...                           # + uv.lock, README.md, LICENSE (MIT), .env.example
 ```
 
 ---

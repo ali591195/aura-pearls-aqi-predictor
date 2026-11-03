@@ -7,7 +7,7 @@ on:
     - cron: "17 0 1 * *"
 
 jobs:
-  run-monthlyy-recovery:
+  run-monthly-recovery:
     runs-on: ubuntu-latest
 
     steps:
