@@ -29,10 +29,8 @@ def run_model_training() -> None:
     # Split dataframe
     train_df, val_df, test_df = split_modeling_data(df)
 
-    train_df_copy = train_df.copy()
-
-    # Get scaler
-    scaler = fit_robust_scaler(train_df_copy, ALL_TRAINING_FEATURES)
+    # Get scaler (fitted on log1p-transformed train data, same as preprocess_data)
+    scaler = fit_robust_scaler(train_df, ALL_TRAINING_FEATURES, ALL_LOG_TRANSFORM_FEATURES)
 
     # Preprocess data
     train_df_preprocess, val_df_preprocess, test_df_preprocess = preprocess_data(train_df, val_df, test_df, log_features=ALL_LOG_TRANSFORM_FEATURES,

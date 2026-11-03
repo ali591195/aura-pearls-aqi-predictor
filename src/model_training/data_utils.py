@@ -1,3 +1,4 @@
+import numpy as np
 from keras import Sequential, Input
 from keras.src.layers import Dense, Dropout
 from keras.src.optimizers import Adam
@@ -36,20 +37,24 @@ def build_mlp_model(total_features: int) -> Sequential:
 
     return mlp_model
 
-def fit_robust_scaler(train_df: DataFrame, features: list[str]) -> RobustScaler:
+def fit_robust_scaler(train_df: DataFrame, features: list[str], log_features: list[str]) -> RobustScaler:
     """
-        Fit and return robust scaler
+        Fit and return robust scaler on log-transformed training data,
+        matching preprocess_data (log1p first, then scaling).
 
         :param train_df: Training dataframe
-        :param features: List of features on which to perform
+        :param features: List of features on which to perform scaling
+        :param log_features: List of features to log1p before fitting
         :return: Robust scaler
     """
-    
-    scaler = RobustScaler()
 
-    train_df[features] = scaler.fit_transform(
-        train_df[features]
-    )
+    train_df = train_df.copy()
+
+    for feature in log_features:
+        train_df[feature] = np.log1p(train_df[feature])
+
+    scaler = RobustScaler()
+    scaler.fit(train_df[features])
 
     return scaler
 
