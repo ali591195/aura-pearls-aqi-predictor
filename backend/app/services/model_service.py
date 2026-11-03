@@ -1,6 +1,7 @@
 import joblib
 import shutil
 import threading
+import time
 from pathlib import Path
 from typing import Any, Callable
 
@@ -14,21 +15,50 @@ from src.common.constants import MODEL_DIR, CURRENT_PROD_MODELS
 from src.common.hopsworks_client import mr
 
 
+# Registry lookups are slow (~4s each), so the latest version is re-checked at most every 10 minutes.
+# Training through the API clears the cache, so a new version is picked up immediately.
+VERSION_CHECK_INTERVAL_SECONDS = 600
+
 # In-memory cache of loaded artifacts: model name -> (version, loaded object)
 _cache: dict[str, tuple[int, Any]] = {}
+# Latest registry version per model name: model name -> (checked at, model version object)
+_version_cache: dict[str, tuple[float, Model]] = {}
 _cache_lock = threading.Lock()
 
 
 def _get_latest_version(model_name: str) -> Model:
     """
-        Get latest model version
+        Get latest model version, re-checking the registry at most
+        every VERSION_CHECK_INTERVAL_SECONDS
 
         :param model_name: Model name
         :return: Model version object with the highest version number
     """
 
+    cached = _version_cache.get(model_name)
+
+    if cached is not None and time.monotonic() - cached[0] < VERSION_CHECK_INTERVAL_SECONDS:
+        return cached[1]
+
     model_versions = mr.get_models(model_name)
-    return max(model_versions, key=lambda model: model.version)
+    latest = max(model_versions, key=lambda model: model.version)
+
+    _version_cache[model_name] = (time.monotonic(), latest)
+
+    return latest
+
+
+def clear_model_cache() -> None:
+    """
+        Forget cached versions and loaded artifacts, so the next request
+        loads the latest models from the registry
+
+        :return: None
+    """
+
+    with _cache_lock:
+        _version_cache.clear()
+        _cache.clear()
 
 
 def _is_version_downloaded(
