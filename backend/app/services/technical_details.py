@@ -8,25 +8,19 @@ from src.common.constants import (
     LATEST_SELECTED_FEATURES_LIST,
     TARGET_COLUMNS
 )
-from src.common.hopsworks_client import mr
 
 from backend.app.services.feature_service import get_features
-from backend.app.services.model_service import get_models, get_scaler
+from backend.app.services.model_service import (
+    _get_latest_version,
+    get_models,
+    get_scaler,
+)
 from backend.app.schemas.technical_details import (
     ModelMetrics,
     ModelTechnicalDetails,
     SHAPFeature,
     TechnicalDetailsResponse,
 )
-
-
-def _get_latest_version(model_name: str):
-    model_versions = mr.get_models(model_name)
-
-    return max(
-        model_versions,
-        key=lambda model: model.version
-    )
 
 
 def _get_local_shap(
